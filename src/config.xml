@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="resourcesusage-widget" version="0.6.0">
+  
+  <details>
+    <title>Resources Usage</title>
+    <email>bgrana@conwet.com</email>
+    <image>images/catalogue.png</image>
+    <smartphoneimage>images/catalogueSmartphone.png</smartphoneimage>
+    <description>FIDASH widget that shows monitoring data through charts</description>
+    <authors>bgrana</authors>
+  </details>
+
+  <wiring></wiring>
+
+  <contents src="index.html" useplatformstyle="true"/>
+  <rendering height="38" width="7"/>
+</widget>
