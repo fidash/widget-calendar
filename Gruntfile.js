@@ -1,5 +1,5 @@
 /* 
- * @copyright 2014 CoNWeT Lab., Universidad Politécnica de Madrid
+ * @copyright 2015 CoNWeT Lab., Universidad Politécnica de Madrid
  * @license Apache v2 (http://www.apache.org/licenses/)
  */
 
@@ -37,14 +37,9 @@ module.exports = function(grunt) {
         files: [
           {expand: true, src: ['**/*', '!test/**'], dest: 'build/wgt', cwd: 'src'},
           {expand: true, src: ['jquery.min.map', 'jquery.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/jquery/dist'},
-          {expand: true, src: ['bootstrap.min.css', 'bootstrap.css.map', 'bootstrap-theme.min.css', 'bootstrap-theme.css.map'], dest: 'build/wgt/lib/css', cwd: 'node_modules/bootstrap/dist/css'},
-          {expand: true, src: ['bootstrap.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/bootstrap/dist/js'},
           {expand: true, src: ['*'], dest: 'build/wgt/lib/fonts', cwd: 'node_modules/bootstrap/dist/fonts'},
-          {expand: true, src: ['css/jquery.dataTables.min.css', 'js/jquery.dataTables.min.js', 'images/*'], dest: 'build/wgt/lib', cwd: 'node_modules/datatables/media'},
-          {expand: true, src: ['css/font-awesome.min.css', 'fonts/*'], dest: 'build/wgt/lib', cwd: 'node_modules/font-awesome'},
-          {expand: true, src: ['bootstrap-switch.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/bootstrap-switch/dist/js'},
-          {expand: true, src: ['bootstrap-switch.min.css'], dest: 'build/wgt/lib/css', cwd: 'node_modules/bootstrap-switch/dist/css/bootstrap3'},
-          {expand: true, src: ['progressbar.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/progressbar.js/dist'}
+          {expand: true, src: ['vis.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/'},
+          {expand: true, src: ['vis.min.css'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/'}
         ]
       }
     },
