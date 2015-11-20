@@ -1,0 +1,19 @@
+{
+    "browser": true,
+    "debug": false,
+    "devel": false,
+    "eqnull": true,
+    "forin": false,
+    "undef": true,
+    "unused": false,
+    "validthis": true,
+    "prototypejs": false,
+    "globalstrict": false,
+    "strict": true,
+    "jquery": true,
+    "white": false,
+    "quotmark": false,
+    "globals": {
+        "vis": true
+    }
+}
