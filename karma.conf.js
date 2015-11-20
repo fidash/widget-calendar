@@ -34,9 +34,7 @@
           included: false },
 
         // Source code
-        'src/js/HostView.js',
-        'src/js/RegionView.js',
-        'src/js/Monitoring.js',
+        'src/js/Timeline.js',
 
         // Spec files
         'src/test/js/*Spec.js'
