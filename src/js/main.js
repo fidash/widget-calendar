@@ -1,4 +1,4 @@
-/* global Calendar,google */
+/* global Calendar, vis */
 
 (function() {
     "use strict";
