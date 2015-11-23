@@ -5,3 +5,9 @@
 .vis-background.demo {
 	background-color: rgba(55, 116, 230, 0.15);
 }
+
+.vis-center>.vis-content {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 100%;
+}
