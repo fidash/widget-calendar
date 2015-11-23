@@ -15,7 +15,6 @@
         // Vendor files
         'src/test/vendor/*.js',
         'node_modules/jquery/dist/jquery.js',
-        'node_modules/bootstrap/dist/js/bootstrap.min.js',
         'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
         'src/lib/js/oauth.js',
 
@@ -34,7 +33,7 @@
           included: false },
 
         // Source code
-        'src/js/Timeline.js',
+        'src/js/Calendar.js',
 
         // Spec files
         'src/test/js/*Spec.js'

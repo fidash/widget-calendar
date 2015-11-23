@@ -1,4 +1,4 @@
-# Timeline Widget
+# Calendar Widget
 
 ## Index
 

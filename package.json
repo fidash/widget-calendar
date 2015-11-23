@@ -1,10 +1,10 @@
 {
-  "name": "Timeline",
-  "homepage": "https://github.com/fidash/widget-timeline",
+  "name": "Calendar",
+  "homepage": "https://github.com/fidash/widget-calendar",
   "version": "0.1.0",
   "vendor": "UPM-ETSIINF",
   "author": "CoNWeT Lab., Universidad Politecnica de Madrid",
-  "description": "A widget for view fiware cloud events",
+  "description": "A widget to view fiware cloud events",
   "repository": {
     "type": "git",
     "url": "https://github.com/fidash/widget-timeline"
@@ -16,6 +16,7 @@
     "widget",
     "openstack",
     "timeline",
+    "calendar",
     "dashboard"
   ],
   "scripts": {

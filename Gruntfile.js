@@ -38,8 +38,9 @@ module.exports = function(grunt) {
           {expand: true, src: ['**/*', '!test/**'], dest: 'build/wgt', cwd: 'src'},
           {expand: true, src: ['jquery.min.map', 'jquery.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/jquery/dist'},
           {expand: true, src: ['*'], dest: 'build/wgt/lib/fonts', cwd: 'node_modules/bootstrap/dist/fonts'},
-          {expand: true, src: ['vis.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/'},
-          {expand: true, src: ['vis.min.css'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/'}
+          {expand: true, src: ['vis.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/dist/'},
+          {expand: true, src: ['vis.min.css'], dest: 'build/wgt/lib/js', cwd: 'node_modules/vis/dist/'},
+          {expand: true, src: ['delete.png'], dest: 'build/wgt/lib/js/img/timeline', cwd: 'node_modules/vis/dist/img/timeline'}
         ]
       }
     },

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="resourcesusage-widget" version="0.1.0">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="calendar-widget" version="0.1.0">
   
   <details>
-    <title>Resources Usage</title>
-    <email>bgrana@conwet.com</email>
+    <title>Calendar</title>
+    <email>jortiz@conwet.com</email>
     <image>images/catalogue.png</image>
     <smartphoneimage>images/catalogueSmartphone.png</smartphoneimage>
-    <description>FIDASH widget that shows monitoring data through charts</description>
-    <authors>bgrana</authors>
+    <description></description>
+    <authors>jortizsancho</authors>
   </details>
 
   <wiring></wiring>

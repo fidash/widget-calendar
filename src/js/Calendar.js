@@ -1,6 +1,6 @@
 /* global google,require,RegionView,HostView,Utils,  */
 
-var Timeline = (function () {
+var Calendar = (function () {
     "use strict";
 
     var container;
@@ -13,7 +13,7 @@ var Timeline = (function () {
     *                     C O N S T R U C T O R                      *
     *****************************************************************/
 
-    function Timeline () {
+    function Calendar () {
 
     }
 
@@ -76,10 +76,10 @@ var Timeline = (function () {
     /*                 P U B L I C   F U N C T I O N S                */
     /******************************************************************/
 
-    Timeline.prototype = {
-        init: function (timelineContainer, timelineOptions) {
-            container = timelineContainer;
-            options = timelineOptions;
+    Calendar.prototype = {
+        init: function (calendarContainer, calendarOptions) {
+            container = calendarContainer;
+            options = calendarOptions;
             
             timeline = new vis.Timeline(container, events, regions, options);
             
@@ -88,6 +88,6 @@ var Timeline = (function () {
         }
     };
 
-    return Timeline;
+    return Calendar;
 
 })();

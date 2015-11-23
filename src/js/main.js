@@ -1,9 +1,9 @@
-/* global Timeline,google */
+/* global Calendar,google */
 
 (function() {
     "use strict";
 
-    var timeline = new Timeline();
-    timeline.init(document.getElementById('visualization'),{});
+    var calendar = new Calendar();
+    calendar.init(document.getElementById('visualization'),{});
 
 })();
