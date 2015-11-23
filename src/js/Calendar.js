@@ -92,6 +92,7 @@ var Calendar = (function (vis) {
             
             obtainRegions();
             obtainEvents();
+            timeline.setOptions(options);
         }
     };
 
