@@ -13,16 +13,17 @@
         'node_modules/phantomjs-polyfill/bind-polyfill.js',
 
         // Vendor files
+        'node_modules/vis/dist/vis.js',
         'node_modules/jquery/dist/jquery.js',
         'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
 
         // Helper files
 
         // Fixtures
-        /*{ pattern: 'src/test/fixtures/html/*.html',
+        { pattern: 'src/test/fixtures/html/*.html',
           watched: true,
           served:  true,
-          included: false },*/
+          included: false },
 
         /*{ pattern: 'src/test/fixtures/json/*.json',
           watched: true,
