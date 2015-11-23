@@ -54,7 +54,7 @@ var Calendar = (function () {
         ]);
         
         events = obtainedEvents;
-        setTimeout(updateEvents(), 4000);
+        updateEvents();
     }
     
     function obtainRegions () {
@@ -77,7 +77,7 @@ var Calendar = (function () {
         ];
         
         regions = obtainedRegions;
-        setTimeout(updateRegions(),3000);
+        updateRegions();
     }
 
     /******************************************************************/
