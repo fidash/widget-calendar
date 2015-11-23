@@ -1,0 +1,7 @@
+.vis-background.maintenance {
+	background-color: rgba(255, 0, 0, 0.15);
+}
+
+.vis-background.demo {
+	background-color: rgba(55, 116, 230, 0.15);
+}
