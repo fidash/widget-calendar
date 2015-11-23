@@ -13,24 +13,21 @@
         'node_modules/phantomjs-polyfill/bind-polyfill.js',
 
         // Vendor files
-        'src/test/vendor/*.js',
         'node_modules/jquery/dist/jquery.js',
         'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-        'src/lib/js/oauth.js',
 
         // Helper files
-        'src/test/helpers/*.js',
 
         // Fixtures
-        { pattern: 'src/test/fixtures/html/*.html',
+        /*{ pattern: 'src/test/fixtures/html/*.html',
           watched: true,
           served:  true,
-          included: false },
+          included: false },*/
 
-        { pattern: 'src/test/fixtures/json/*.json',
+        /*{ pattern: 'src/test/fixtures/json/*.json',
           watched: true,
           served:  true,
-          included: false },
+          included: false },*/
 
         // Source code
         'src/js/Calendar.js',
