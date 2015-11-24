@@ -8,7 +8,17 @@
     {
       height: "100vh", 
       orientation: "top",
-      zoomKey: 'shiftKey'
+      zoomKey: 'shiftKey',
+      editable: true
+    });
+    
+    $(document).ready(function(){
+      $('.vis-center>.vis-content').on('scroll', function () {
+          $('.vis-left>.vis-content').scrollTop($(this).scrollTop());
+      });
+      $('.vis-left>.vis-content').on('scroll', function () {
+          $('.vis-center>.vis-content').scrollTop($(this).scrollTop());
+      });	
     });
 
 })();
