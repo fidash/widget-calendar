@@ -11,3 +11,8 @@
     overflow-y: scroll;
     height: 100%;
 }
+.vis-left>.vis-content {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
