@@ -30,6 +30,7 @@
     "http": "0.0.0",
     "jquery": "^2.1.4",
     "oauth": "^0.9.13",
+    "jquery": "^2.1.4",
     "vis": "4.9.0"
   },
   "devDependencies": {
