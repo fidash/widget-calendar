@@ -9,6 +9,8 @@
       height: "100vh", 
       orientation: "top",
       zoomKey: 'shiftKey',
+      zoomMax: 315360000000,
+      zoomMin: 600000,
       editable: true
     });
     
