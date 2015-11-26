@@ -16,3 +16,25 @@
     overflow-x: hidden;
     overflow-y: hidden;
 }
+
+.vis-item.vis-range.maintenance {
+  color: #000;
+  background-color: #73B2E8;
+  border-color: #2E6DA4;
+}
+.vis-item.vis-range.vis-selected.maintenance {
+  color: #fff;
+  background-color: #275F8E;
+  border-color: #204d74;
+}
+
+.vis-item.vis-range.demo {
+  color: #000;
+  background-color: #FFC779;
+  border-color: #DE8F1F;
+}
+.vis-item.vis-range.vis-selected.demo {
+  color: #fff;
+  background-color: #E68D11;
+  border-color: #BD6F01;
+}
