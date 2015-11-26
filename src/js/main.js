@@ -11,7 +11,13 @@
       zoomKey: 'shiftKey',
       zoomMax: 315360000000,
       zoomMin: 600000,
-      editable: true
+      editable: {
+        add: false,
+        updateTime: true,
+        updateGroup: false,
+        remove: true
+      }
+      
     });
     
     $(document).ready(function(){
