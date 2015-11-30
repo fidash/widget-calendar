@@ -191,7 +191,7 @@ var Calendar = (function (vis) {
 
     Calendar.prototype = {
         init: function (calendarContainer, calendarOptions) {
-            console.log("Start Timeline v0.2.5")
+            console.log("Start Timeline v0.2.5");
             container = calendarContainer;
             options = calendarOptions;
             
