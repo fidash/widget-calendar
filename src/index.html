@@ -2,11 +2,15 @@
 <html>
   <head>
     <title>Timeline | Basic demo</title>
+    
     <script src="lib/js/vis.min.js"></script>
     <script src="lib/js/jquery.min.js"></script>
+    <script src="lib/js/bootstrap.min.js"></script>
+    
     <script type="text/javascript" src="js/Calendar.js"></script>
     
-    <link href="lib/js/vis.min.css" rel="stylesheet" type="text/css" />
+    <link href="lib/css/vis.min.css" rel="stylesheet" type="text/css" />
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="css/Calendar.css" rel="stylesheet" type="text/css" />
     
     <style type="text/css">
@@ -19,6 +23,74 @@
     <div id="visualization"></div>
     
     <script type="text/javascript" src="js/main.js"></script>
-  
+    
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="modalLabel">Event name</h4>
+          </div>
+          
+          <div class="modal-body">
+            <div class="row">
+              <div class='col-xs-6'>
+                <div class="form-group">
+                  <div class='input-group date' id='title'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                      <span>Title</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class="form-group">
+                  <div class='input-group date' id='description'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                      <span>Description</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class='col-xs-4'>
+                <div class="form-group">
+                  <div class='input-group date' id='dateTimeStart'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class='col-xs-4'>
+                <div class="form-group">
+                  <div class='input-group date' id='dateTimeEnd'>
+                    <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class='col-xs-4'>
+                <div class="form-group">
+                  <select class="form-control" id="eventType">
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveEvent">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
