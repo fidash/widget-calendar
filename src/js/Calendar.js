@@ -39,17 +39,13 @@ var Calendar = (function (vis) {
         
         //TODO: get events from Wirecloud API
         obtainedEvents = new vis.DataSet([
-            {id: 1, content: 'Reinicio', start: '2015-11-24', group: 'Lannion2', editable: true},
-            {id: 2, content: 'item 2', start: '2015-11-14', group: 'Crete', type: 'point'},
-            {id: 3, content: 'item 3', start: '2015-11-18', group: 'Crete', type: 'point'},
-            {id: 4, content: 'item 4', start: '2015-11-16 14:08', end: '2015-11-19', group: 'Volos'},
-            {id: 5, content: 'item 4', start: '2015-11-17', group: 'Prague', type: 'point'},
-            {id: 6, content: 'item 5', start: '2015-11-25', group:'Zurich', type: 'point'},
-            {id: 7, content: 'Fiware 1', start: '2015-11-23 09:00', end: '2015-11-23 12:00', group: 'Spain2'},
-            {id: 8, content: 'Fiware 2', start: '2015-11-24 09:00', end: '2015-11-24 12:00', group: 'Spain2'},
-            {id: 9, content: 'Fiware 3', start: '2015-11-24 12:00', end: '2015-11-24 15:00', group: 'Spain2'},
-            {id: 10, content: 'Fiware 4', start: '2015-11-26 09:00', end: '2015-11-26 12:00', group: 'Spain2'},
-            {id: 11, content: 'Fiware 5', start: '2015-11-27 17:00', end: '2015-11-27 20:00', group: 'Spain2'}
+            {id: 1, content: 'Maintenance', start: '2015-11-25', end: '2015-12-01', group: 'Prague', type: 'range', className: "maintenance", editable: true},
+            {id: 2, content: 'Maintenance', start: '2015-11-30', end: '2015-12-03', group:'Zurich', type: 'range', className: "maintenance", editable: false},
+            {id: 3, content: 'Demo 1', start: '2015-11-30 09:00', end: '2015-11-30 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
+            {id: 4, content: 'Demo 2', start: '2015-12-01 09:00', end: '2015-12-01 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
+            {id: 5, content: 'Demo 3', start: '2015-12-01 12:00', end: '2015-12-01 15:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
+            {id: 6, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
+            {id: 7, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Spain2', type: 'range', className: "demo", editable: true}
         ]);
         
         events = obtainedEvents;
@@ -90,8 +86,7 @@ var Calendar = (function (vis) {
           },
           onSuccess: function(response) {
             user = JSON.parse(response.response);      
-            console.log("Success obtaining user. \n");
-            console.log(user);            
+            console.log("Success obtaining user. \n");          
           },
           onError: function(response) {
             console.log("Error obtaining user. \n" + response);	
@@ -107,43 +102,83 @@ var Calendar = (function (vis) {
           return true;
         }
       }
-      
-      console.log("Coincidencia no encontrada.");
       return false;
     }
     
-    function doubleClick (props) {
-      console.log("Hecho doble click");
-      console.log(props);
-      
-      if(props.what === "background") {
-        var startDate = props.time;
-        var endDate = new Date(props.time.getTime() + 1800000); 
+    function showEditEvent(props, event) {
+      console.log("Showing event: "+event.id);
+      $('#modalLabel').text(event.title); //Modal Name
+      $('#title>input').val(event.title); //Event Title
+      $('#description>input').val(event.content); //Event Content
+      $('#dateTimeStart>input').val(event.start); //Add start datetime
+      $('#dateTimeEnd>input').val(event.end); //Add final datetime
         
-        if(isInfrastructureOwner(props.group)) {
-          events.add({
-            title: 'Maintenance', 
-            content: 'Maintenance', 
-            start: startDate, 
-            end: endDate, 
+      $('#eventType').find('option').remove(); //Clear Options
+      $('#eventType').append(new Option("Demo", "demo"));
+      if (isInfrastructureOwner(props.group))
+        $('#eventType').append(new Option("Maintenance", "maintenance"));
+    
+      $('#myModal').modal("show");
+      $('#saveEvent').off("click");
+      $('#saveEvent').click({props: props, event: event}, saveEvent);
+    }
+    
+    function showNewEvent(props, startDate, endDate) {
+      console.log("Showing new event");
+      $('#modalLabel').text('New Event'); //Modal Name
+      $('#title>input').val('Title Event'); //Event Title
+      $('#description>input').val('Description Event'); //Event Content
+      $('#dateTimeStart>input').val(startDate); //Add start datetime
+      $('#dateTimeEnd>input').val(endDate); //Add final datetime
+        
+      $('#eventType').find('option').remove(); //Clear Options
+      $('#eventType').append(new Option("Demo", "demo"));
+      if (isInfrastructureOwner(props.group))
+        $('#eventType').append(new Option("Maintenance", "maintenance"));
+    
+      $('#myModal').modal("show");
+      $('#saveEvent').off("click");
+      $('#saveEvent').click({props: props, event: null}, saveEvent);
+    }
+    
+    function saveEvent(param) {
+      var props = param.data.props;
+      var event = param.data.event;
+      if (param.data.event == null) {
+        events.add({
+            title: $('#title>input').val(), 
+            content: $('#description>input').val(), 
+            start: $('#dateTimeStart>input').val(), 
+            end: $('#dateTimeEnd>input').val(), 
             group: props.group, 
             type: 'range', 
-            className: 'maintenance', 
-            editable: true 
-          });
-        } else {
-          events.add({
-            title: 'Demo', 
-            content: 'Demo', 
-            start: startDate, 
-            end: endDate, 
+            className: $('#eventType').val(), 
+            editable: true
+        });
+      } else {
+        events.update({
+            id: event.id,
+            title: $('#title>input').val(), 
+            content: $('#description>input').val(), 
+            start: $('#dateTimeStart>input').val(), 
+            end: $('#dateTimeEnd>input').val(), 
             group: props.group, 
             type: 'range', 
-            className: 'demo', 
-            editable: true 
-            });
-        }
-        
+            className: $('#eventType').val(), 
+            editable: true
+        });  
+      }
+      $('#myModal').modal("hide");
+    }
+    
+    function doubleClick (props) {      
+      if (props.what === "background") {
+        showNewEvent(props, props.time, new Date(props.time.getTime() + 1800000));
+      }
+      if (props.what === "item") {
+        var item = events.get(props.item);
+        if (item.editable)
+          showEditEvent(props, item);
       }
       
     }
@@ -156,8 +191,7 @@ var Calendar = (function (vis) {
 
     Calendar.prototype = {
         init: function (calendarContainer, calendarOptions) {
-            console.log("Prueba version D");
-            
+            console.log("Start Timeline v0.2.5")
             container = calendarContainer;
             options = calendarOptions;
             
@@ -169,6 +203,9 @@ var Calendar = (function (vis) {
             
             timeline.setOptions(options);
             
+            $('#myModal').on('shown.bs.modal', function () {
+              $('#myInput').focus();
+            });
             timeline.on('doubleClick', doubleClick);
         }
     };
