@@ -112,12 +112,14 @@ var Calendar = (function (vis) {
       $('#description>input').val(event.content); //Event Content
       $('#dateTimeStart>input').val(event.start); //Add start datetime
       $('#dateTimeEnd>input').val(event.end); //Add final datetime
-        
+            
       $('#eventType').find('option').remove(); //Clear Options
       $('#eventType').append(new Option("Demo", "demo"));
       if (isInfrastructureOwner(props.group))
         $('#eventType').append(new Option("Maintenance", "maintenance"));
-    
+      
+      $('#eventType option[value="' + event.className + '"]').prop('selected', true); //Select event className
+      
       $('#myModal').modal("show");
       $('#saveEvent').off("click");
       $('#saveEvent').click({props: props, event: event}, saveEvent);
