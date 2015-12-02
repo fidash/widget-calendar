@@ -26,6 +26,8 @@
   color: #fff;
   background-color: #275F8E;
   border-color: #204d74;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(39, 95, 142, 0.8);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(39, 95, 142, 0.8);
 }
 
 .vis-item.vis-range.demo {
@@ -37,4 +39,22 @@
   color: #fff;
   background-color: #E68D11;
   border-color: #BD6F01;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(212, 129, 14);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(212, 129, 14);
+}
+
+.dateTable {
+  margin-bottom: 0px;
+}
+
+.dateTable>tbody>tr>.dateTd {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.dateTable>tbody>tr>td {
+  border-top: 0px;
+  border-top-width: 0px;
+  padding-left: 1px;
+  padding-right: 1px;
 }
