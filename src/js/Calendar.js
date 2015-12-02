@@ -1,4 +1,4 @@
-/* global vis, MashupPlatform, console */
+/* global vis, MashupPlatform, console, moment */
 
 var Calendar = (function (vis) {
     "use strict";
@@ -106,12 +106,17 @@ var Calendar = (function (vis) {
     }
     
     function showEditEvent(props, event) {
-      console.log("Showing event: "+event.id);
-      $('#modalLabel').text(event.title); //Modal Name
-      $('#title>input').val(event.title); //Event Title
-      $('#description>input').val(event.content); //Event Content
-      $('#dateTimeStart>input').val(event.start); //Add start datetime
-      $('#dateTimeEnd>input').val(event.end); //Add final datetime
+      console.log("Showing event: " + event.id);
+      
+      var startDate = new Date(event.start);
+      var endDate = new Date(event.end);
+      
+      $('#modalTitle').text(event.content); //Modal Name
+      $('#description').val(event.content); //Event Content
+      $('#dateStart').val(moment(startDate).format("YYYY-MM-DD")); //Add start datetime    
+      $('#timeStart').val(moment(startDate).format("HH:mm")); //Add start datetime
+      $('#dateEnd').val(moment(endDate).format("YYYY-MM-DD")); //Add final datetime
+      $('#timeEnd').val(moment(endDate).format("HH:mm")); //Add final datetime
             
       $('#eventType').find('option').remove(); //Clear Options
       $('#eventType').append(new Option("Demo", "demo"));
@@ -120,57 +125,98 @@ var Calendar = (function (vis) {
       
       $('#eventType option[value="' + event.className + '"]').prop('selected', true); //Select event className
       
-      $('#myModal').modal("show");
+      //Events
+      $('#description').change(checkModalDates);
+      $('#dateStart').change(checkModalDates);
+      $('#timeStart').change(checkModalDates);
+      $('#dateEnd').change(checkModalDates);
+      $('#tiemEnd').change(checkModalDates);
       $('#saveEvent').off("click");
       $('#saveEvent').click({props: props, event: event}, saveEvent);
+      
+      $('#modalEventEditor').modal("show");
     }
     
     function showNewEvent(props, startDate, endDate) {
       console.log("Showing new event");
-      $('#modalLabel').text('New Event'); //Modal Name
-      $('#title>input').val('Title Event'); //Event Title
-      $('#description>input').val('Description Event'); //Event Content
-      $('#dateTimeStart>input').val(startDate); //Add start datetime
-      $('#dateTimeEnd>input').val(endDate); //Add final datetime
+      
+      $('#modalTitle').text('New Event'); //Modal Name
+      $('#description').val("");
+      $('#dateStart').val(moment(startDate).format("YYYY-MM-DD")); //Add start datetime    
+      $('#timeStart').val(moment(startDate).format("HH:mm")); //Add start datetime
+      $('#dateEnd').val(moment(endDate).format("YYYY-MM-DD")); //Add final datetime
+      $('#timeEnd').val(moment(endDate).format("HH:mm")); //Add final datetime
         
       $('#eventType').find('option').remove(); //Clear Options
       $('#eventType').append(new Option("Demo", "demo"));
       if (isInfrastructureOwner(props.group))
         $('#eventType').append(new Option("Maintenance", "maintenance"));
-    
-      $('#myModal').modal("show");
+      
+      //Events
+      $('#description').keyup(checkModalDates);
+      $('#dateStart').change(checkModalDates);
+      $('#timeStart').change(checkModalDates);
+      $('#dateEnd').change(checkModalDates);
+      $('#tiemEnd').change(checkModalDates);
       $('#saveEvent').off("click");
       $('#saveEvent').click({props: props, event: null}, saveEvent);
+      
+      $('#saveEvent').prop('disabled', true);
+      $('#modalEventEditor').modal("show");
     }
     
     function saveEvent(param) {
       var props = param.data.props;
       var event = param.data.event;
-      if (param.data.event == null) {
-        events.add({
-            title: $('#title>input').val(), 
-            content: $('#description>input').val(), 
-            start: $('#dateTimeStart>input').val(), 
-            end: $('#dateTimeEnd>input').val(), 
-            group: props.group, 
-            type: 'range', 
-            className: $('#eventType').val(), 
-            editable: true
-        });
+      
+      if (moment($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
+        if (param.data.event == null) {
+          events.add({
+              title: $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val(),
+              content: $('#description').val(), 
+              start: $('#dateStart').val() + " " + $('#timeStart').val(), 
+              end: $('#dateEnd').val() + " " + $('#timeEnd').val(), 
+              group: props.group, 
+              type: 'range', 
+              className: $('#eventType').val(), 
+              editable: true
+          });
+        } else {
+          events.update({
+              id: event.id,
+              title: $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val(), 
+              content: $('#description').val(), 
+              start: $('#dateStart').val() + " " + $('#timeStart').val(), 
+              end: $('#dateEnd').val() + " " + $('#timeEnd').val(), 
+              group: props.group, 
+              type: 'range', 
+              className: $('#eventType').val(), 
+              editable: true
+          });  
+        }
+        $('#modalEventEditor').modal("hide");
       } else {
-        events.update({
-            id: event.id,
-            title: $('#title>input').val(), 
-            content: $('#description>input').val(), 
-            start: $('#dateTimeStart>input').val(), 
-            end: $('#dateTimeEnd>input').val(), 
-            group: props.group, 
-            type: 'range', 
-            className: $('#eventType').val(), 
-            editable: true
-        });  
+        //Show Error
       }
-      $('#myModal').modal("hide");
+    }
+    
+    function checkModalDates() {
+      var error = false;
+      if(moment($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
+        $('#dateEndForm').removeClass('has-error');
+        $('#timeEndForm').removeClass('has-error');
+      } else {
+        $('#dateEndForm').addClass('has-error');
+        $('#timeEndForm').addClass('has-error');
+        error = true;
+      }
+      if($('#description').val() === "") {
+        $('#descriptionForm').addClass('has-error');
+        error = true;
+      } else {
+        $('#descriptionForm').removeClass('has-error');
+      }
+      $('#saveEvent').prop('disabled', error);
     }
     
     function doubleClick (props) {      
@@ -185,7 +231,6 @@ var Calendar = (function (vis) {
       
     }
     
-    
 
     /******************************************************************/
     /*                 P U B L I C   F U N C T I O N S                */
@@ -193,7 +238,7 @@ var Calendar = (function (vis) {
 
     Calendar.prototype = {
         init: function (calendarContainer, calendarOptions) {
-            console.log("Start Timeline v0.2.5");
+            console.log("Start Timeline v0.2.20");
             container = calendarContainer;
             options = calendarOptions;
             
@@ -205,8 +250,8 @@ var Calendar = (function (vis) {
             
             timeline.setOptions(options);
             
-            $('#myModal').on('shown.bs.modal', function () {
-              $('#myInput').focus();
+            $('#modalEventEditor').on('shown.bs.modal', function () {
+              $('#description').focus();
             });
             timeline.on('doubleClick', doubleClick);
         }
