@@ -1,4 +1,4 @@
-/* global vis, MashupPlatform, console, moment */
+/* global vis, MashupPlatform, console, moment, EventEditor */
 
 var Calendar = (function (vis) {
     "use strict";
@@ -8,6 +8,7 @@ var Calendar = (function (vis) {
     var regions = [];
     var options = {};
     var timeline = {};
+    var eventEditor;
     var user;
 
     /*****************************************************************
@@ -66,10 +67,10 @@ var Calendar = (function (vis) {
           
           object._embedded.regions.forEach(function(region) {
             regions.push({id: region.id, content: region.id});
-            console.log("Añadiendo Region: " + region.id);
           }, this);
           
           updateRegions();
+          console.log("Success obtaining regions. \n");
         },
         onError: function(response) {
           console.log("Error obtaining regions. \n" + response);	
@@ -106,131 +107,54 @@ var Calendar = (function (vis) {
     }
     
     function showEditEvent(props, event) {
-      console.log("Showing event: " + event.id);
+      var eventTypes;
+      if (isInfrastructureOwner(props.group)) {
+        eventTypes = [
+          {text: 'Demo', value: 'demo'},
+          {text: 'Maintenance', value: 'maintenance'}
+        ];
+      } else {
+        eventTypes = [
+          {text: 'Demo', value: 'demo'}
+        ];
+      }
       
-      var startDate = new Date(event.start);
-      var endDate = new Date(event.end);
-      
-      $('#modalTitle').text(event.content); //Modal Name
-      $('#description').val(event.content); //Event Content
-      $('#dateStart').val(moment(startDate).format("YYYY-MM-DD")); //Add start datetime    
-      $('#timeStart').val(moment(startDate).format("HH:mm")); //Add start datetime
-      $('#dateEnd').val(moment(endDate).format("YYYY-MM-DD")); //Add final datetime
-      $('#timeEnd').val(moment(endDate).format("HH:mm")); //Add final datetime
-            
-      $('#eventType').find('option').remove(); //Clear Options
-      $('#eventType').append(new Option("Demo", "demo"));
-      if (isInfrastructureOwner(props.group))
-        $('#eventType').append(new Option("Maintenance", "maintenance"));
-      
-      $('#eventType option[value="' + event.className + '"]').prop('selected', true); //Select event className
-      
-      //Events
-      $('#description').change(checkModalDates);
-      $('#dateStart').change(checkModalDates);
-      $('#timeStart').change(checkModalDates);
-      $('#dateEnd').change(checkModalDates);
-      $('#tiemEnd').change(checkModalDates);
-      $('#saveEvent').off("click");
-      $('#saveEvent').click({props: props, event: event}, saveEvent);
-      
-      $('#modalEventEditor').modal("show");
+      if (typeof event.id !== 'undefined')
+        eventEditor.showEventEditor(event, eventTypes, saveEvent);      
+      else
+        eventEditor.showEventEditor(event, eventTypes, saveEvent);      
     }
     
-    function showNewEvent(props, startDate, endDate) {
-      console.log("Showing new event");
-      
-      $('#modalTitle').text('New Event'); //Modal Name
-      $('#description').val("");
-      $('#dateStart').val(moment(startDate).format("YYYY-MM-DD")); //Add start datetime    
-      $('#timeStart').val(moment(startDate).format("HH:mm")); //Add start datetime
-      $('#dateEnd').val(moment(endDate).format("YYYY-MM-DD")); //Add final datetime
-      $('#timeEnd').val(moment(endDate).format("HH:mm")); //Add final datetime
-        
-      $('#eventType').find('option').remove(); //Clear Options
-      $('#eventType').append(new Option("Demo", "demo"));
-      if (isInfrastructureOwner(props.group))
-        $('#eventType').append(new Option("Maintenance", "maintenance"));
-      
-      //Events
-      $('#description').keyup(checkModalDates);
-      $('#dateStart').change(checkModalDates);
-      $('#timeStart').change(checkModalDates);
-      $('#dateEnd').change(checkModalDates);
-      $('#tiemEnd').change(checkModalDates);
-      $('#saveEvent').off("click");
-      $('#saveEvent').click({props: props, event: null}, saveEvent);
-      
-      $('#saveEvent').prop('disabled', true);
-      $('#modalEventEditor').modal("show");
+    function saveNewEvent(event) {
+      events.add(event);
+      eventEditor.hideEventEditor();
     }
     
-    function saveEvent(param) {
-      var props = param.data.props;
-      var event = param.data.event;
-      
-      if (moment($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
-        if (param.data.event == null) {
-          events.add({
-              title: $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val(),
-              content: $('#description').val(), 
-              start: $('#dateStart').val() + " " + $('#timeStart').val(), 
-              end: $('#dateEnd').val() + " " + $('#timeEnd').val(), 
-              group: props.group, 
-              type: 'range', 
-              className: $('#eventType').val(), 
-              editable: true
-          });
-        } else {
-          events.update({
-              id: event.id,
-              title: $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val(), 
-              content: $('#description').val(), 
-              start: $('#dateStart').val() + " " + $('#timeStart').val(), 
-              end: $('#dateEnd').val() + " " + $('#timeEnd').val(), 
-              group: props.group, 
-              type: 'range', 
-              className: $('#eventType').val(), 
-              editable: true
-          });  
-        }
-        $('#modalEventEditor').modal("hide");
-      } else {
-        //Show Error
-      }
-    }
-    
-    function checkModalDates() {
-      var error = false;
-      if(moment($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
-        $('#dateEndForm').removeClass('has-error');
-        $('#timeEndForm').removeClass('has-error');
-      } else {
-        $('#dateEndForm').addClass('has-error');
-        $('#timeEndForm').addClass('has-error');
-        error = true;
-      }
-      if($('#description').val() === "") {
-        $('#descriptionForm').addClass('has-error');
-        error = true;
-      } else {
-        $('#descriptionForm').removeClass('has-error');
-      }
-      $('#saveEvent').prop('disabled', error);
-    }
+    function saveEvent(event) {
+      events.update(event);
+      eventEditor.hideEventEditor();
+    }  
     
     function doubleClick (props) {      
       if (props.what === "background") {
-        showNewEvent(props, props.time, new Date(props.time.getTime() + 1800000));
+        var event = {
+          title: '',
+          content: '', 
+          start: new Date(props.time.getTime()), 
+          end: new Date(props.time.getTime() + 1800000), 
+          group: props.group, 
+          type: 'range', 
+          className: '', 
+          editable: true
+        };
+        showEditEvent(props, event);
       }
       if (props.what === "item") {
         var item = events.get(props.item);
         if (item.editable)
           showEditEvent(props, item);
       }
-      
-    }
-    
+    }  
 
     /******************************************************************/
     /*                 P U B L I C   F U N C T I O N S                */
@@ -238,7 +162,7 @@ var Calendar = (function (vis) {
 
     Calendar.prototype = {
         init: function (calendarContainer, calendarOptions) {
-            console.log("Start Timeline v0.2.20");
+            console.log("Start Timeline v0.5.2");
             container = calendarContainer;
             options = calendarOptions;
             
@@ -250,9 +174,10 @@ var Calendar = (function (vis) {
             
             timeline.setOptions(options);
             
-            $('#modalEventEditor').on('shown.bs.modal', function () {
-              $('#description').focus();
-            });
+            //Events Editor
+            eventEditor = new EventEditor();
+            eventEditor.setUp();
+            
             timeline.on('doubleClick', doubleClick);
         }
     };
