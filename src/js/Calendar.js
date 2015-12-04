@@ -10,6 +10,12 @@ var Calendar = (function (vis) {
     var timeline = {};
     var eventEditor;
     var user;
+    var userRol;
+    
+    var ROLES = {
+      DEMO: "Demo",
+      INFRASTRUCTUREOWNER: "InfrastructureOwner"
+    };
 
     /*****************************************************************
     *                     C O N S T R U C T O R                      *
@@ -64,6 +70,7 @@ var Calendar = (function (vis) {
           var object = JSON.parse(response.response);
           
           regions = [];
+          regions.push({id: "demos", content: "Demos"});
           
           object._embedded.regions.forEach(function(region) {
             regions.push({id: region.id, content: region.id});
@@ -86,7 +93,12 @@ var Calendar = (function (vis) {
           "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
           },
           onSuccess: function(response) {
-            user = JSON.parse(response.response);      
+            user = JSON.parse(response.response);
+            if (isInfrastructureOwner()) {
+              userRol = "InfrastructureOwner";
+            } else {
+              userRol = "Demo";
+            } 
             console.log("Success obtaining user. \n");          
           },
           onError: function(response) {
@@ -96,33 +108,18 @@ var Calendar = (function (vis) {
     }
     
     function isInfrastructureOwner (region) {
-      var FIDASHRegion = region + " FIDASH";
-      for (var index = 0; index < user.organizations.length; index++) {
-        if (FIDASHRegion === user.organizations[index].name) {
-          console.log("Coincidencia encontrada: " + user.organizations[index].name);
-          return true;
+      if(region) {
+        var FIDASHRegion = region + " FIDASH";
+        for (var index = 0; index < user.organizations.length; index++) {
+          if (FIDASHRegion === user.organizations[index].name) {
+            console.log("Coincidencia encontrada: " + user.organizations[index].name);
+            return true;
+          }
         }
-      }
-      return false;
-    }
-    
-    function showEditEvent(props, event) {
-      var eventTypes;
-      if (isInfrastructureOwner(props.group)) {
-        eventTypes = [
-          {text: 'Demo', value: 'demo'},
-          {text: 'Maintenance', value: 'maintenance'}
-        ];
+        return false;
       } else {
-        eventTypes = [
-          {text: 'Demo', value: 'demo'}
-        ];
+        return user.organizations.length > 0;
       }
-      
-      if (typeof event.id !== 'undefined')
-        eventEditor.showEventEditor(event, eventTypes, saveEvent);      
-      else
-        eventEditor.showEventEditor(event, eventTypes, saveEvent);      
     }
     
     function saveNewEvent(event) {
@@ -135,24 +132,42 @@ var Calendar = (function (vis) {
       eventEditor.hideEventEditor();
     }  
     
-    function doubleClick (props) {      
+    function nolose(props) {
+      var event;
       if (props.what === "background") {
-        var event = {
+        event = {
           title: '',
           content: '', 
           start: new Date(props.time.getTime()), 
           end: new Date(props.time.getTime() + 1800000), 
           group: props.group, 
           type: 'range', 
-          className: '', 
+          className: (props.group === "demos") ? 'demo' : 'maintenance', 
           editable: true
         };
-        showEditEvent(props, event);
+        eventEditor.showEventEditor(event, saveEvent);
       }
       if (props.what === "item") {
-        var item = events.get(props.item);
-        if (item.editable)
-          showEditEvent(props, item);
+        event = events.get(props.item);
+        if (event.editable)
+          eventEditor.showEventEditor(event, saveEvent);
+      }
+    }
+    
+    function doubleClick (props) {
+      switch (userRol) {
+        case ROLES.DEMO:
+          if (props.group === "demos") {
+            nolose(props);
+          }
+          break;
+        case ROLES.INFRASTRUCTUREOWNER:
+          if (isInfrastructureOwner(props.group)) {
+            nolose(props);
+          }
+          break;
+        default: 
+          break; 
       }
     }  
 

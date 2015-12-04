@@ -47,7 +47,6 @@ var EventEditor = (function (vis) {
       $('#descriptionForm').removeClass('has-error');
       $('#dateEndForm').removeClass('has-error');
       $('#timeEndForm').removeClass('has-error');
-      $('#eventType').find('option').remove();
       $('#saveEvent').prop('disabled', true);
     }
     
@@ -59,7 +58,6 @@ var EventEditor = (function (vis) {
       event.content = $('#description').val();
       event.start = $('#dateStart').val() + " " + $('#timeStart').val();
       event.end = $('#dateEnd').val() + " " + $('#timeEnd').val();
-      event.className = $('#eventType').val();
       
       callback(event);
     }
@@ -84,7 +82,7 @@ var EventEditor = (function (vis) {
           $('#dateEnd').change(checkEventEditor);
           $('#tiemEnd').change(checkEventEditor);
         },
-        showEventEditor: function (event, eventTypes, saveFunction) {
+        showEventEditor: function (event, saveFunction) {
           clearEventEditor();
           
           if (event.content === "")
@@ -97,11 +95,6 @@ var EventEditor = (function (vis) {
           $('#timeStart').val(moment(event.start).format("HH:mm")); //Add start datetime
           $('#dateEnd').val(moment(event.end).format("YYYY-MM-DD")); //Add final datetime
           $('#timeEnd').val(moment(event.end).format("HH:mm")); //Add final datetime
-          
-          eventTypes.forEach(function(element) {
-            $('#eventType').append(new Option(element.text, element.value));
-          }, this);
-          $('#eventType option[value="' + event.className + '"]').prop('selected', true); //Select event className
           
           if (typeof event.id !== 'undefined')
             $('#saveEvent').prop('disabled', false);            
