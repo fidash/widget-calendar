@@ -1,4 +1,4 @@
-/* global Calendar, vis */
+/* global console, Calendar, vis */
 
 (function() {
     "use strict";
@@ -16,7 +16,26 @@
         updateTime: true,
         updateGroup: false,
         remove: true
-      }
+      },
+      groupOrder: function (a, b) {
+          console.log("Ordenar!!");
+          console.log(a.id);
+          console.log(b.id);
+          if (a.id === "demos") {
+            return -1;
+          }
+          if (b.id === "demos") {
+            return 1;
+          }
+          
+          var groups = [a.id, b.id];
+          groups.sort();
+          if (a.id === groups[0]) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
       
     });
     
