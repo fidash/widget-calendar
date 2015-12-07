@@ -48,11 +48,12 @@ var Calendar = (function (vis) {
         obtainedEvents = new vis.DataSet([
             {id: 1, content: 'Maintenance', start: '2015-11-25', end: '2015-12-01', group: 'Prague', type: 'range', className: "maintenance", editable: true},
             {id: 2, content: 'Maintenance', start: '2015-11-30', end: '2015-12-03', group:'Zurich', type: 'range', className: "maintenance", editable: false},
-            {id: 3, content: 'Demo 1', start: '2015-11-30 09:00', end: '2015-11-30 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
-            {id: 4, content: 'Demo 2', start: '2015-12-01 09:00', end: '2015-12-01 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
-            {id: 5, content: 'Demo 3', start: '2015-12-01 12:00', end: '2015-12-01 15:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
-            {id: 6, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Spain2', type: 'range', className: "demo", editable: true},
-            {id: 7, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Spain2', type: 'range', className: "demo", editable: true}
+            {id: 3, content: 'Maintenance', start: '2015-12-07 09:00', end: '2015-12-07 12:00', group:'Budapest2', type: 'range', className: "maintenance", editable: false},
+            {id: 4, content: 'Demo 1', start: '2015-11-30 09:00', end: '2015-11-30 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
+            {id: 5, content: 'Demo 2', start: '2015-12-01 09:00', end: '2015-12-01 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
+            {id: 6, content: 'Demo 3', start: '2015-12-01 12:00', end: '2015-12-01 15:00', group: 'Demos', type: 'range', className: "demo", editable: false},
+            {id: 7, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
+            {id: 8, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Demos', type: 'range', className: "demo", editable: false}
         ]);
         
         events = obtainedEvents;
@@ -70,7 +71,7 @@ var Calendar = (function (vis) {
           var object = JSON.parse(response.response);
           
           regions = [];
-          regions.push({id: "demos", content: "Demos"});
+          regions.push({id: "Demos", content: "Demos"});
           
           object._embedded.regions.forEach(function(region) {
             regions.push({id: region.id, content: region.id});
@@ -112,7 +113,6 @@ var Calendar = (function (vis) {
         var FIDASHRegion = region + " FIDASH";
         for (var index = 0; index < user.organizations.length; index++) {
           if (FIDASHRegion === user.organizations[index].name) {
-            console.log("Coincidencia encontrada: " + user.organizations[index].name);
             return true;
           }
         }
@@ -132,7 +132,7 @@ var Calendar = (function (vis) {
       eventEditor.hideEventEditor();
     }  
     
-    function nolose(props) {
+    function showEventEditor(props) {
       var event;
       if (props.what === "background") {
         event = {
@@ -142,7 +142,7 @@ var Calendar = (function (vis) {
           end: new Date(props.time.getTime() + 1800000), 
           group: props.group, 
           type: 'range', 
-          className: (props.group === "demos") ? 'demo' : 'maintenance', 
+          className: (props.group === "Demos") ? 'demo' : 'maintenance', 
           editable: true
         };
         eventEditor.showEventEditor(event, saveEvent);
@@ -157,13 +157,13 @@ var Calendar = (function (vis) {
     function doubleClick (props) {
       switch (userRol) {
         case ROLES.DEMO:
-          if (props.group === "demos") {
-            nolose(props);
+          if (props.group === "Demos") {
+            showEventEditor(props);
           }
           break;
         case ROLES.INFRASTRUCTUREOWNER:
           if (isInfrastructureOwner(props.group)) {
-            nolose(props);
+            showEventEditor(props);
           }
           break;
         default: 
