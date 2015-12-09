@@ -45,7 +45,6 @@ var Calendar = (function (vis) {
             {id: 7, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
             {id: 8, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Demos', type: 'range', className: "demo", editable: false}
         ]);
-        updateEvents();
     }
     
     function obtainRegions () {
@@ -169,6 +168,7 @@ var Calendar = (function (vis) {
             options = calendarOptions;
             
             regions.on("*", updateRegions);
+            events.on("*", updateEvents);
             
             timeline = new vis.Timeline(container, events, regions, options);
             
