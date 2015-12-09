@@ -4,8 +4,8 @@ var Calendar = (function (vis) {
     "use strict";
 
     var container;
-    var events = {};
-    var regions = [];
+    var events = new vis.DataSet();
+    var regions = new vis.DataSet();
     var options = {};
     var timeline = {};
     var eventEditor;
@@ -70,11 +70,11 @@ var Calendar = (function (vis) {
         onSuccess: function(response) {         
           var object = JSON.parse(response.response);
           
-          regions = [];
-          regions.push({id: "Demos", content: "Demos"});
+          regions.clear();
+          regions.add({id: "Demos", content: "Demos"});
           
           object._embedded.regions.forEach(function(region) {
-            regions.push({id: region.id, content: region.id});
+            regions.add({id: region.id, content: region.id});
           }, this);
           
           updateRegions();
