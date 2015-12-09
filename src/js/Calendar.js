@@ -42,10 +42,8 @@ var Calendar = (function (vis) {
     }
 
     function obtainEvents () {
-        var obtainedEvents;
-        
-        //TODO: get events from Wirecloud API
-        obtainedEvents = new vis.DataSet([
+        events.clear();
+        events.add([
             {id: 1, content: 'Maintenance', start: '2015-11-25', end: '2015-12-01', group: 'Prague', type: 'range', className: "maintenance", editable: true},
             {id: 2, content: 'Maintenance', start: '2015-11-30', end: '2015-12-03', group:'Zurich', type: 'range', className: "maintenance", editable: false},
             {id: 3, content: 'Maintenance', start: '2015-12-07 09:00', end: '2015-12-07 12:00', group:'Budapest2', type: 'range', className: "maintenance", editable: false},
@@ -55,8 +53,6 @@ var Calendar = (function (vis) {
             {id: 7, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
             {id: 8, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Demos', type: 'range', className: "demo", editable: false}
         ]);
-        
-        events = obtainedEvents;
         updateEvents();
     }
     
