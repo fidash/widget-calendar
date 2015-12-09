@@ -21,25 +21,17 @@ var Calendar = (function (vis) {
     *                     C O N S T R U C T O R                      *
     *****************************************************************/
 
-    function Calendar () {
-      
-    }
+    function Calendar () {}
 
     /******************************************************************/
     /*                P R I V A T E   F U N C T I O N S               */
     /******************************************************************/
     
-    function updateEvents () {
-      timeline.setItems(events);
-    }
+    function updateEvents () { timeline.setItems(events); }
     
-    function updateRegions () {
-      timeline.setGroups(regions);
-    }
+    function updateRegions () { timeline.setGroups(regions); }
     
-    function updateOptions () {
-      timeline.setOptions(options);
-    }
+    function updateOptions () { timeline.setOptions(options); }
 
     function obtainEvents () {
         events.clear();
@@ -73,7 +65,6 @@ var Calendar = (function (vis) {
             regions.add({id: region.id, content: region.id});
           }, this);
           
-          updateRegions();
           console.log("Success obtaining regions. \n");
         },
         onError: function(response) {
@@ -84,24 +75,24 @@ var Calendar = (function (vis) {
     
     function obtainUser () {
       MashupPlatform.http.makeRequest("https://account.lab.fiware.org/user/?access_token=ADp9U5YVRDJd32mg7Dm53h1z4cOCCt", {
-          method: 'GET',
-          requestHeaders: {
-          "X-FI-WARE-OAuth-Token": "true",
-          "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
-          },
-          onSuccess: function(response) {
-            user = JSON.parse(response.response);
-            if (isInfrastructureOwner()) {
-              userRol = "InfrastructureOwner";
-            } else {
-              userRol = "Demo";
-            } 
-            console.log("Success obtaining user. \n");          
-          },
-          onError: function(response) {
-            console.log("Error obtaining user. \n" + response);	
-          }
-        });
+        method: 'GET',
+        requestHeaders: {
+        "X-FI-WARE-OAuth-Token": "true",
+        "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
+        },
+        onSuccess: function(response) {
+          user = JSON.parse(response.response);
+          if (isInfrastructureOwner()) {
+            userRol = "InfrastructureOwner";
+          } else {
+            userRol = "Demo";
+          } 
+          console.log("Success obtaining user. \n");          
+        },
+        onError: function(response) {
+          console.log("Error obtaining user. \n" + response);	
+        }
+      });
     }
     
     function isInfrastructureOwner (region) {
@@ -176,6 +167,8 @@ var Calendar = (function (vis) {
             console.log("Start Timeline v0.5.2");
             container = calendarContainer;
             options = calendarOptions;
+            
+            regions.on("*", updateRegions);
             
             timeline = new vis.Timeline(container, events, regions, options);
             
