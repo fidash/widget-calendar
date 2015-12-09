@@ -18,13 +18,10 @@
         remove: true
       },
       groupOrder: function (a, b) {
-          console.log("Ordenar!!");
-          console.log(a.id);
-          console.log(b.id);
-          if (a.id === "demos") {
+          if (a.id === "Demos") {
             return -1;
           }
-          if (b.id === "demos") {
+          if (b.id === "Demos") {
             return 1;
           }
           
