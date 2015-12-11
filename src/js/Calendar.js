@@ -125,7 +125,7 @@ var Calendar = (function (vis) {
         title: '',
         content: '', 
         start: new Date(props.time.getTime()), 
-        end: new Date(props.time.getTime() + 1800000), 
+        end: new Date(props.time.getTime() + 21600000), 
         group: props.group, 
         type: 'range', 
         className: (props.group === "Demos") ? 'demo' : 'maintenance', 
