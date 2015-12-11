@@ -10,7 +10,7 @@
       orientation: "top",
       zoomKey: 'shiftKey',
       zoomMax: 315360000000,
-      zoomMin: 600000,
+      zoomMin: 86400000,
       editable: {
         add: false,
         updateTime: true,
