@@ -155,7 +155,44 @@ var Calendar = (function (vis) {
       default: 
         break; 
     }
-  }  
+  }
+  
+  function getDefaultOptions() {
+    return {
+      height: "100vh", 
+      orientation: "top",
+      zoomKey: 'shiftKey',
+      zoomMax: 315360000000,
+      zoomMin: 86400000,
+      editable: {
+        add: false,
+        updateTime: true,
+        updateGroup: false,
+        remove: true
+      },
+      groupOrder: function (a, b) {
+          if (a.id === "Demos") {
+            return -1;
+          }
+          if (b.id === "Demos") {
+            return 1;
+          }
+          
+          var groups = [a.id, b.id];
+          groups.sort();
+          if (a.id === groups[0]) {
+            return -1;
+          } else {
+            return 1;
+          }
+      },
+      onMove: function (item, callback) {
+        item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');
+        events.update(item);
+        //callback(item);
+      }
+    };
+  }
 
   /******************************************************************/
   /*                 P U B L I C   F U N C T I O N S                */
@@ -165,7 +202,11 @@ var Calendar = (function (vis) {
     init: function (calendarContainer, calendarOptions) {
       console.log("Start Timeline v0.5.2");
       container = calendarContainer;
-      options = calendarOptions;
+      if (typeof calendarOptions !== 'undefined') {
+        options = getDefaultOptions();
+      } else {
+        options = calendarOptions;                
+      }
           
       regions.on("*", updateRegions);
       events.on("*", updateEvents);
@@ -175,7 +216,7 @@ var Calendar = (function (vis) {
       obtainUser();
       obtainRegions();
       obtainEvents();
-          
+      
       timeline.setOptions(options);
           
       //Events Editor
