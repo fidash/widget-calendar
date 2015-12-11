@@ -32,8 +32,11 @@
           } else {
             return 1;
           }
-        }
-      
+      },
+      onMove: function (item, callback) {
+        item.title = item.content + "\n" + "Start: " + item.Start + "\n" + "End: " + item.end;
+        callback(item);
+      }
     });
     
     $(document).ready(function(){
