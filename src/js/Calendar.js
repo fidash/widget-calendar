@@ -1,4 +1,4 @@
-/* global vis, MashupPlatform, console, moment, EventEditor, CalendarAPI */
+/* global vis, MashupPlatform, console, moment, EventEditor, CalendarAPI, RegionAPI, UserAPI */
 
 var Calendar = (function (vis) {
   "use strict";
@@ -10,6 +10,8 @@ var Calendar = (function (vis) {
   var timeline = {};
   var eventEditor;
   var calendarAPI;
+  var userAPI;
+  var regionAPI;
   var user;
   var userRol;
   
@@ -35,56 +37,45 @@ var Calendar = (function (vis) {
   function updateOptions () { timeline.setOptions(options); }
 
   function obtainEvents () {
-      
-   calendarAPI.getAllEvents(
-       function (response) {
-           console.log("Success obtaining events. \n");
-           events.clear();
-           
-           JSON.parse(response.response).events.forEach(function(event) {
-               var newEvent;
-               console.log(event.uid);
-               newEvent = {
-                 id: event.uid,
-                 content: event.description,
-                 group: event.location,
-                 start: event.dtstart,
-                 end: event.dtend,
-                 className: "",
-                 editable: "",
-                 type: 'range'
-               };
-               
-               if (event.location === "Demos") {
-                   newEvent.className = "demo";
-               } else {
-                   newEvent.className = "maintenance";
-               }
-               if (isInfrastructureOwner(event.location)) {
-                   newEvent.editable = true;
-               } else {
-                   newEvent.editable = false;
-               }
-               events.add(newEvent);
-               
-           }, this);
-           
-           
-       },
-       function () {
-           console.log("Error obtaining events. \n");
-       }
-   );
+    calendarAPI.getAllEvents(
+      function (response) {
+        console.log("Success obtaining events.");
+        events.clear();
+        JSON.parse(response.response).events.forEach(function(event) {
+          var newEvent = {
+            id: event.uid,
+            content: event.description,
+            title: event.summary.replace(/\\\n/g, "\n"),
+            group: event.location,
+            start: event.dtstart,
+            end: event.dtend,
+            className: "",
+            editable: false,
+            type: 'range'
+          };
+          if (event.location === "Demos") {
+            newEvent.className = "demo";
+          } else {
+            newEvent.className = "maintenance";
+          }
+          if (isInfrastructureOwner(event.location)) {
+            newEvent.editable = true;
+          } else {
+            newEvent.editable = false;
+          }
+          events.add(newEvent);
+        }, this);
+      },
+      function () {
+        console.log("Error obtaining events.");
+      }
+    );
   }
   
   function obtainRegions () {
-    MashupPlatform.http.makeRequest("http://130.206.84.4:1028/monitoring/regions/", {
-      method: 'GET',
-      requestHeaders: {
-      "X-FI-WARE-OAuth-Token": "true",
-      "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
-      },
-      onSuccess: function(response) {         
+    regionAPI.getRegions(
+      function(response) {
+        console.log("Success obtaining regions.");      
         var object = JSON.parse(response.response);
         
         regions.clear();
@@ -93,34 +84,26 @@ var Calendar = (function (vis) {
         object._embedded.regions.forEach(function(region) {
           regions.add({id: region.id, content: region.id});
         }, this);
-        
-        console.log("Success obtaining regions. \n");
       },
-      onError: function(response) {
-        console.log("Error obtaining regions. \n" + response);	
-      }
+      function(response) {
+        console.log("Error obtaining regions." + response);	
     });
   }
   
   function obtainUser () {
-    MashupPlatform.http.makeRequest("https://account.lab.fiware.org/user/?access_token=ADp9U5YVRDJd32mg7Dm53h1z4cOCCt", {
-      method: 'GET',
-      requestHeaders: {
-      "X-FI-WARE-OAuth-Token": "true",
-      "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
-      },
-      onSuccess: function(response) {
+    //TODO: Get User Access Token
+    userAPI.getUser("ADp9U5YVRDJd32mg7Dm53h1z4cOCCt", 
+      function(response) {
         user = JSON.parse(response.response);
         if (isInfrastructureOwner()) {
           userRol = "InfrastructureOwner";
         } else {
           userRol = "Demo";
         } 
-        console.log("Success obtaining user. \n");          
+        console.log("Success obtaining user.");          
       },
-      onError: function(response) {
-        console.log("Error obtaining user. \n" + response);	
-      }
+      function(response) {
+        console.log("Error obtaining user." + response);	
     });
   }
   
@@ -141,21 +124,20 @@ var Calendar = (function (vis) {
   function saveNewEvent(event) {
     var eventAPI = {
       location: event.group,
-      summary: event.content,
-      description: "event.title",
+      summary: event.title.replace(/\n/g, "\\n"),
+      description: event.content,
       dtend: moment(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
       dtstart: moment(event.start).format("YYYY-MM-DD HH:mm:ssZZ")
     };
-    console.log(JSON.stringify(eventAPI));
     
     calendarAPI.addEvent(eventAPI, 
     function (response) {
-        console.log("Success in addEvent.");
+        console.log("Created Event Successfully.");
         events.add(event);
         eventEditor.hideEventEditor();
     },
     function () {
-        console.log("Error in addEvent");
+        console.log("Error creating Event");
     });
     
   }
@@ -243,7 +225,12 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.5.2");
+      console.log("Start Timeline v0.8.0");
+      
+      calendarAPI = new CalendarAPI();
+      regionAPI = new RegionAPI();
+      userAPI = new UserAPI();
+      
       container = calendarContainer;
       if (typeof calendarOptions !== 'undefined') {
         options = getDefaultOptions();
@@ -257,24 +244,22 @@ var Calendar = (function (vis) {
           //callback(item);
       };
       options.onRemove = function (item, callback) {
-          var event = {
-            location: item.group,
-            summary: item.content,
-            description: "item.title",
-            dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
-            dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
-            uid: item.id
-          };
-          calendarAPI.deleteEvent(event,
-            function () {
-              callback(item);
-            },
-            function () {
-              callback(null);
-          });
+        var event = {
+          location: item.group,
+          summary: item.title.replace(/\n/g, "\\n"),
+          description: item.content,
+          dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+          uid: item.id
+        };
+        calendarAPI.deleteEvent(event,
+          function () {
+            callback(item);
+          },
+          function () {
+            callback(null);
+        });
       };
-      
-      calendarAPI = new CalendarAPI();
           
       regions.on("*", updateRegions);
       events.on("*", updateEvents);
