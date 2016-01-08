@@ -133,6 +133,7 @@ var Calendar = (function (vis) {
     calendarAPI.addEvent(eventAPI, 
     function (response) {
         console.log("Created Event Successfully.");
+        event.id = JSON.parse(response.response).event.uid;
         events.add(event);
         eventEditor.hideEventEditor();
     },
@@ -225,7 +226,7 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.8.0");
+      console.log("Start Timeline v0.8.2");
       
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
