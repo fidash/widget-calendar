@@ -1,4 +1,4 @@
-/* global vis, MashupPlatform, console, moment, EventEditor */
+/* global vis, MashupPlatform, console, moment, EventEditor, CalendarAPI */
 
 var Calendar = (function (vis) {
   "use strict";
@@ -9,6 +9,7 @@ var Calendar = (function (vis) {
   var options = {};
   var timeline = {};
   var eventEditor;
+  var calendarAPI;
   var user;
   var userRol;
   
@@ -34,17 +35,46 @@ var Calendar = (function (vis) {
   function updateOptions () { timeline.setOptions(options); }
 
   function obtainEvents () {
-    events.clear();
-    events.add([
-          {id: 1, content: 'Maintenance', start: '2015-11-25', end: '2015-12-01', group: 'Prague', type: 'range', className: "maintenance", editable: true},
-          {id: 2, content: 'Maintenance', start: '2015-11-30', end: '2015-12-03', group:'Zurich', type: 'range', className: "maintenance", editable: false},
-          {id: 3, content: 'Maintenance', start: '2015-12-07 09:00', end: '2015-12-07 12:00', group:'Budapest2', type: 'range', className: "maintenance", editable: false},
-          {id: 4, content: 'Demo 1', start: '2015-11-30 09:00', end: '2015-11-30 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
-          {id: 5, content: 'Demo 2', start: '2015-12-01 09:00', end: '2015-12-01 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
-          {id: 6, content: 'Demo 3', start: '2015-12-01 12:00', end: '2015-12-01 15:00', group: 'Demos', type: 'range', className: "demo", editable: false},
-          {id: 7, content: 'Demo 4', start: '2015-12-02 09:00', end: '2015-12-02 12:00', group: 'Demos', type: 'range', className: "demo", editable: false},
-          {id: 8, content: 'Demo 5', start: '2015-12-03 17:00', end: '2015-12-03 20:00', group: 'Demos', type: 'range', className: "demo", editable: false}
-    ]);
+      
+   calendarAPI.getAllEvents(
+       function (response) {
+           console.log("Success obtaining events. \n");
+           events.clear();
+           
+           JSON.parse(response.response).events.forEach(function(event) {
+               var newEvent;
+               console.log(event.uid);
+               newEvent = {
+                 id: event.uid,
+                 content: event.description,
+                 group: event.location,
+                 start: event.dtstart,
+                 end: event.dtend,
+                 className: "",
+                 editable: "",
+                 type: 'range'
+               };
+               
+               if (event.location === "Demos") {
+                   newEvent.className = "demo";
+               } else {
+                   newEvent.className = "maintenance";
+               }
+               if (isInfrastructureOwner(event.location)) {
+                   newEvent.editable = true;
+               } else {
+                   newEvent.editable = false;
+               }
+               events.add(newEvent);
+               
+           }, this);
+           
+           
+       },
+       function () {
+           console.log("Error obtaining events. \n");
+       }
+   );
   }
   
   function obtainRegions () {
@@ -109,8 +139,25 @@ var Calendar = (function (vis) {
   }
   
   function saveNewEvent(event) {
-    events.add(event);
-    eventEditor.hideEventEditor();
+    var eventAPI = {
+      location: event.group,
+      summary: event.content,
+      description: "event.title",
+      dtend: moment(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+      dtstart: moment(event.start).format("YYYY-MM-DD HH:mm:ssZZ")
+    };
+    console.log(JSON.stringify(eventAPI));
+    
+    calendarAPI.addEvent(eventAPI, 
+    function (response) {
+        console.log("Success in addEvent.");
+        events.add(event);
+        eventEditor.hideEventEditor();
+    },
+    function () {
+        console.log("Error in addEvent");
+    });
+    
   }
   
   function saveEvent(event) {
@@ -131,7 +178,7 @@ var Calendar = (function (vis) {
         className: (props.group === "Demos") ? 'demo' : 'maintenance', 
         editable: true
       };
-      eventEditor.showEventEditor(event, saveEvent);
+      eventEditor.showEventEditor(event, saveNewEvent);
     }
     if (props.what === "item") {
       event = events.get(props.item);
@@ -186,11 +233,7 @@ var Calendar = (function (vis) {
             return 1;
           }
       },
-      onMove: function (item, callback) {
-        item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');
-        events.update(item);
-        //callback(item);
-      }
+      
     };
   }
 
@@ -207,6 +250,31 @@ var Calendar = (function (vis) {
       } else {
         options = calendarOptions;                
       }
+      
+      options.onMove = function (item, callback) {
+          item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');
+          events.update(item);
+          //callback(item);
+      };
+      options.onRemove = function (item, callback) {
+          var event = {
+            location: item.group,
+            summary: item.content,
+            description: "item.title",
+            dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+            dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+            uid: item.id
+          };
+          calendarAPI.deleteEvent(event,
+            function () {
+              callback(item);
+            },
+            function () {
+              callback(null);
+          });
+      };
+      
+      calendarAPI = new CalendarAPI();
           
       regions.on("*", updateRegions);
       events.on("*", updateEvents);
