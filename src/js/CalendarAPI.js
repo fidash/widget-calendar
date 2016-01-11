@@ -3,7 +3,7 @@
 var CalendarAPI = (function () {
     "use strict";
 
-    var url =  "http://130.206.113.159:8085/api/v1";
+    var url = "http://130.206.113.159:8085/api/v1";
 
     /*****************************************************************
     *                     C O N S T R U C T O R                      *
@@ -78,6 +78,14 @@ var CalendarAPI = (function () {
       if (dtstamp !== null) event.dtstamp = dtstamp;
       return event;
     }
+    
+    function updateEvent(event, success, error) {      
+      deleteEvent(event, function() {
+        console.log("Event removed (Update) successfully.");
+        event.uid = null;
+        addEvent(event, success, error);
+      }, error);
+    }
 
     /******************************************************************/
     /*                 P U B L I C   F U N C T I O N S                */
@@ -92,6 +100,9 @@ var CalendarAPI = (function () {
       },
       deleteEvent: function (event, success, error) {
         deleteEvent(event, success, error);
+      },
+      updateEvent: function (event, success, error) {
+        updateEvent(event, success, error);
       },
       test: function (success, error) {
         test(success, error);
