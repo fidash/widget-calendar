@@ -58,3 +58,7 @@
   padding-left: 1px;
   padding-right: 1px;
 }
+
+.vis-group.editable:hover {
+  cursor: cell;
+}
