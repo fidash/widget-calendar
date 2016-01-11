@@ -56,9 +56,8 @@ var EventEditor = (function () {
 
       event.title = $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val();
       event.content = $('#description').val();
-      event.start = $('#dateStart').val() + " " + $('#timeStart').val();
-      event.end = $('#dateEnd').val() + " " + $('#timeEnd').val();
-      
+      event.start = $('#dateStart').val() + " " + $('#timeStart').val() + moment().format("ZZ");
+      event.end = $('#dateEnd').val() + " " + $('#timeEnd').val() + moment().format("ZZ");
       callback(event);
     }
 
@@ -72,7 +71,7 @@ var EventEditor = (function () {
           
         },
         setUp: function () {
-          console.log("Configurando el editor de eventos");
+          console.log("Configurando el editor de eventos.");
           $('#modalEventEditor').on('shown.bs.modal', function () {
             $('#description').focus();
           });
