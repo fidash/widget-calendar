@@ -21,7 +21,6 @@ var UserAPI = (function () {
         method: 'GET',
         requestHeaders: {
           "X-FI-WARE-OAuth-Token": "true",
-          //"X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"
           "x-fi-ware-oauth-get-parameter": "access_token"
         },
         onSuccess: success,

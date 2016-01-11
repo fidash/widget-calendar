@@ -29,8 +29,7 @@ var CalendarAPI = (function () {
     }
     
     function addEvent(event, success, error) {
-      console.log(JSON.stringify(event));
-        MashupPlatform.http.makeRequest(url + "/events", {
+      MashupPlatform.http.makeRequest(url + "/events", {
         method: 'POST',
         contentType: "application/json",
         requestHeaders: {
@@ -55,6 +54,15 @@ var CalendarAPI = (function () {
       });
     }
     
+    function updateEvent(event, success, error) {
+      //TODO: Implementar con la API cuando este disponible.
+      deleteEvent(event, function() {
+        console.log("Event removed (Update) successfully.");
+        event.uid = null;
+        addEvent(event, success, error);
+      }, error);
+    }
+    
     function test(event, success, error) {
       MashupPlatform.http.makeRequest(url, {
         method: 'GET',
@@ -77,14 +85,6 @@ var CalendarAPI = (function () {
       if (dtend !== null) event.dtend = dtend;
       if (dtstamp !== null) event.dtstamp = dtstamp;
       return event;
-    }
-    
-    function updateEvent(event, success, error) {      
-      deleteEvent(event, function() {
-        console.log("Event removed (Update) successfully.");
-        event.uid = null;
-        addEvent(event, success, error);
-      }, error);
     }
 
     /******************************************************************/
