@@ -3,7 +3,7 @@
 var RegionAPI = (function () {
     "use strict";
 
-    var url =  "http://130.206.84.4:1028/monitoring/regions/";
+    var url = "http://130.206.84.4:1028/monitoring/regions/";
 
     /*****************************************************************
     *                     C O N S T R U C T O R                      *
