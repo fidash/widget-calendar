@@ -1,6 +1,6 @@
 /* global console, moment */
 
-var EventEditor = (function (vis) {
+var EventEditor = (function () {
     "use strict";
 
     /*****************************************************************
@@ -114,4 +114,4 @@ var EventEditor = (function (vis) {
     };
 
     return EventEditor;
-})(vis);
+})();
