@@ -58,11 +58,19 @@ var Calendar = (function (vis) {
           } else {
             newEvent.className = "maintenance";
           }
-          if (isInfrastructureOwner(event.location)) {
+          
+          if (userRol === ROLES.DEMO && event.location === "Demos") {
             newEvent.editable = true;
           } else {
-            newEvent.editable = false;
+            if (isInfrastructureOwner(event.location)) {
+              newEvent.editable = true;
+            } else {
+              newEvent.editable = false;
+            }
           }
+          
+          
+          
           events.add(newEvent);
         }, this);
       },
@@ -92,7 +100,7 @@ var Calendar = (function (vis) {
   
   function obtainUser () {
     //TODO: Get User Access Token
-    userAPI.getUser("ADp9U5YVRDJd32mg7Dm53h1z4cOCCt", 
+    userAPI.getUser(
       function(response) {
         user = JSON.parse(response.response);
         if (isInfrastructureOwner()) {
@@ -132,6 +140,7 @@ var Calendar = (function (vis) {
     
     calendarAPI.addEvent(eventAPI, 
     function (response) {
+        events.remove(event.id);
         console.log("Created Event Successfully.");
         event.id = JSON.parse(response.response).event.uid;
         events.add(event);
@@ -144,8 +153,24 @@ var Calendar = (function (vis) {
   }
   
   function saveEvent(event) {
-    events.update(event);
-    eventEditor.hideEventEditor();
+    var eventAPI = {
+      location: event.group,
+      summary: event.title.replace(/\n/g, "\\n"),
+      description: event.content,
+      dtend: moment(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+      dtstart: moment(event.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+      uid: event.id
+    };
+    calendarAPI.updateEvent(eventAPI,
+      function (response) {
+        console.log("Event added (Update) successfully.");
+        events.remove(event.id);
+        event.id = JSON.parse(response.response).event.uid;
+        events.update(event);
+        eventEditor.hideEventEditor();
+      },
+      function () {
+    });   
   }  
   
   function showEventEditor(props) {
@@ -215,8 +240,7 @@ var Calendar = (function (vis) {
           } else {
             return 1;
           }
-      },
-      
+      }
     };
   }
 
@@ -240,9 +264,26 @@ var Calendar = (function (vis) {
       }
       
       options.onMove = function (item, callback) {
-          item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');
-          events.update(item);
-          //callback(item);
+        item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');        
+        var event = {
+          location: item.group,
+          summary: item.title.replace(/\n/g, "\\n"),
+          description: item.content,
+          dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+          uid: item.id
+        };
+        calendarAPI.updateEvent(event,
+          function (response) {
+            console.log("Event added (Update) successfully.");
+            events.remove(item.id);
+            item.id = JSON.parse(response.response).event.uid;
+            events.update(item);
+            //callback(item);
+          },
+          function () {
+            callback(null);
+        });
       };
       options.onRemove = function (item, callback) {
         var event = {
