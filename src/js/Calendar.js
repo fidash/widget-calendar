@@ -48,9 +48,9 @@ var Calendar = (function (vis) {
             type: 'range'
           };
           
-          if (event.location === "Demos") {
-            newEvent.className = "demo";
-            newEvent.editable = userAPI.utils.isDemo(user);
+          if (event.location === "Up Time Request") {
+            newEvent.className = "up-time-request";
+            newEvent.editable = userAPI.utils.isUpTimeRequest(user);
           } else {
             newEvent.className = "maintenance";
             newEvent.editable = userAPI.utils.isInfrastructureOwner(user, event.location);
@@ -73,10 +73,10 @@ var Calendar = (function (vis) {
         
         regions.clear();
         
-        if (userRol === userAPI.ROLES.DEMO) {
-          regions.add({id: "Demos", content: "Demos", className: "editable"});
+        if (userRol === userAPI.ROLES.UPTIMEREQUEST) {
+          regions.add({id: "Up Time Request", content: "Up Time Request", className: "editable"});
         } else {
-          regions.add({id: "Demos", content: "Demos"});
+          regions.add({id: "Up Time Request", content: "Up Time Request"});
         }
         
         object._embedded.regions.forEach(function(region) {
@@ -162,7 +162,7 @@ var Calendar = (function (vis) {
         end: new Date(props.time.getTime() + 21600000), 
         group: props.group, 
         type: 'range', 
-        className: (props.group === "Demos") ? 'demo' : 'maintenance', 
+        className: (props.group === "Up Time Request") ? 'up-time-request' : 'maintenance', 
         editable: true
       };
       eventEditor.showEventEditor(event, saveNewEvent);
@@ -176,8 +176,8 @@ var Calendar = (function (vis) {
   
   function doubleClick (props) {
     switch (userRol) {
-      case userAPI.ROLES.DEMO:
-        if (props.group === "Demos") {
+      case userAPI.ROLES.UPTIMEREQUEST:
+        if (props.group === "Up Time Request") {
           showEventEditor(props);
         }
         break;
@@ -205,10 +205,10 @@ var Calendar = (function (vis) {
         remove: true
       },
       groupOrder: function (a, b) {
-          if (a.id === "Demos") {
+          if (a.id === "Up Time Request") {
             return -1;
           }
-          if (b.id === "Demos") {
+          if (b.id === "Up Time Request") {
             return 1;
           }
           

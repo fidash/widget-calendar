@@ -54,11 +54,18 @@ var EventEditor = (function () {
       var event = object.data.oldEvent;
       var callback = object.data.callback;
 
-      event.title = $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val();
+      event.title = createTitle();
       event.content = $('#description').val();
       event.start = $('#dateStart').val() + " " + $('#timeStart').val() + moment.utc().format("ZZ");
       event.end = $('#dateEnd').val() + " " + $('#timeEnd').val() + moment.utc().format("ZZ");
       callback(event);
+    }
+    
+    function createTitle () {
+      var title = $('#description').val() + "\n"; 
+      title += "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + " UTC\n" ;
+      title += "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val() + " UTC";
+      return title; 
     }
 
 
