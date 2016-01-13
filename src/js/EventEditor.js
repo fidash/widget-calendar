@@ -22,7 +22,7 @@ var EventEditor = (function () {
     }
     
     function isValidDateEventEditor() {
-      if(moment($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
+      if(moment.utc($('#dateStart').val() + " " + $('#timeStart').val()).isBefore(moment.utc($('#dateEnd').val() + " " + $('#timeEnd').val()))) {
         $('#dateEndForm').removeClass('has-error');
         $('#timeEndForm').removeClass('has-error');
         return true;
@@ -56,8 +56,8 @@ var EventEditor = (function () {
 
       event.title = $('#description').val() + "\n" + "Start: " + $('#dateStart').val() + " " + $('#timeStart').val() + "\n" + "End: " + $('#dateEnd').val() + " " + $('#timeEnd').val();
       event.content = $('#description').val();
-      event.start = $('#dateStart').val() + " " + $('#timeStart').val() + moment().format("ZZ");
-      event.end = $('#dateEnd').val() + " " + $('#timeEnd').val() + moment().format("ZZ");
+      event.start = $('#dateStart').val() + " " + $('#timeStart').val() + moment.utc().format("ZZ");
+      event.end = $('#dateEnd').val() + " " + $('#timeEnd').val() + moment.utc().format("ZZ");
       callback(event);
     }
 
@@ -90,10 +90,10 @@ var EventEditor = (function () {
             $('#modalTitle').text(event.content);
           
           $('#description').val(event.content); //Event Content
-          $('#dateStart').val(moment(event.start).format("YYYY-MM-DD")); //Add start datetime    
-          $('#timeStart').val(moment(event.start).format("HH:mm")); //Add start datetime
-          $('#dateEnd').val(moment(event.end).format("YYYY-MM-DD")); //Add final datetime
-          $('#timeEnd').val(moment(event.end).format("HH:mm")); //Add final datetime
+          $('#dateStart').val(moment.utc(event.start).format("YYYY-MM-DD")); //Add start datetime    
+          $('#timeStart').val(moment.utc(event.start).format("HH:mm")); //Add start datetime
+          $('#dateEnd').val(moment.utc(event.end).format("YYYY-MM-DD")); //Add final datetime
+          $('#timeEnd').val(moment.utc(event.end).format("HH:mm")); //Add final datetime
           
           if (typeof event.id !== 'undefined')
             $('#saveEvent').prop('disabled', false);            
