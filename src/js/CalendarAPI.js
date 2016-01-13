@@ -1,4 +1,4 @@
-/* global console, MashupPlatform, moment */
+/* global console, MashupPlatform */
 
 var CalendarAPI = (function () {
     "use strict";
