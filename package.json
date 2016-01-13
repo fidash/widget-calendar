@@ -1,7 +1,7 @@
 {
   "name": "Calendar",
   "homepage": "https://github.com/fidash/widget-calendar",
-  "version": "0.8.70",
+  "version": "0.8.75",
   "vendor": "UPM-ETSIINF",
   "author": "CoNWeT Lab., Universidad Politecnica de Madrid",
   "description": "A widget to view fiware cloud events",
