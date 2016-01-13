@@ -232,7 +232,7 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.8.2");
+      console.log("Start Timeline v0.8.70");
       
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
