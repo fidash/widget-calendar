@@ -30,12 +30,12 @@
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(39, 95, 142, 0.8);
 }
 
-.vis-item.vis-range.demo {
+.vis-item.vis-range.up-time-request {
   color: #000;
   background-color: #FFC779;
   border-color: #DE8F1F;
 }
-.vis-item.vis-range.vis-selected.demo {
+.vis-item.vis-range.vis-selected.up-time-request {
   color: #fff;
   background-color: #E68D11;
   border-color: #BD6F01;
@@ -64,5 +64,11 @@
 }
 .vis-group.editable {
   cursor: auto;
+  background-color: transparent;
+}
+.vis-label {
+  background-color: rgba(0,0,0,0.10);
+}
+.vis-label.editable {
   background-color: transparent;
 }
