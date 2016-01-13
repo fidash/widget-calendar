@@ -14,11 +14,6 @@ var Calendar = (function (vis) {
   var regionAPI;
   var user;
   var userRol;
-  
-  var ROLES = {
-    DEMO: "Demo",
-    INFRASTRUCTUREOWNER: "InfrastructureOwner"
-  };
 
   /*****************************************************************
   *                     C O N S T R U C T O R                      *
@@ -39,7 +34,6 @@ var Calendar = (function (vis) {
   function obtainEvents () {
     calendarAPI.getAllEvents(
       function (response) {
-        console.log("Success obtaining events.");
         events.clear();
         JSON.parse(response.response).events.forEach(function(event) {
           var newEvent = {
@@ -47,29 +41,24 @@ var Calendar = (function (vis) {
             content: event.description,
             title: event.summary.replace(/\\\n/g, "\n"),
             group: event.location,
-            start: moment(event.dtstart),
-            end: moment(event.dtend),
+            start: moment.utc(event.dtstart),
+            end: moment.utc(event.dtend),
             className: "",
             editable: false,
             type: 'range'
-          };         
+          };
+          
           if (event.location === "Demos") {
             newEvent.className = "demo";
+            newEvent.editable = userAPI.utils.isDemo(user);
           } else {
             newEvent.className = "maintenance";
+            newEvent.editable = userAPI.utils.isInfrastructureOwner(user, event.location);
           }
-          
-          if (userRol === ROLES.DEMO && event.location === "Demos") {
-            newEvent.editable = true;
-          } else {
-            if (isInfrastructureOwner(event.location)) {
-              newEvent.editable = true;
-            } else {
-              newEvent.editable = false;
-            }
-          }
+          console.log(newEvent);
           events.add(newEvent);
         }, this);
+        console.log("Success obtaining events.");        
       },
       function (response) {
         console.log("Error obtaining events. " + response);
@@ -80,23 +69,24 @@ var Calendar = (function (vis) {
   function obtainRegions () {
     regionAPI.getRegions(
       function(response) {
-        console.log("Success obtaining regions.");      
         var object = JSON.parse(response.response);
         
         regions.clear();
-        if (userRol === ROLES.DEMO) {
-          regions.add({id: "Demos", content: "Demos <i class=\"icon-edit\"></i>", className: "editable"});
+        
+        if (userRol === userAPI.ROLES.DEMO) {
+          regions.add({id: "Demos", content: "Demos", className: "editable"});
         } else {
           regions.add({id: "Demos", content: "Demos"});
         }
         
         object._embedded.regions.forEach(function(region) {
-          if(isInfrastructureOwner(region.id)) {
-            regions.add({id: region.id, content: region.id + " <i class=\"icon-edit\"></i>", className: "editable"});
+          if(userAPI.utils.isInfrastructureOwner(user, region.id)) {
+            regions.add({id: region.id, content: region.id, className: "editable"});
           } else {
             regions.add({id: region.id, content: region.id});
           }
         }, this);
+        console.log("Success obtaining regions.");              
       },
       function(response) {
         console.log("Error obtaining regions. " + response);	
@@ -107,30 +97,13 @@ var Calendar = (function (vis) {
     userAPI.getUser(
       function(response) {
         user = JSON.parse(response.response);
-        if (isInfrastructureOwner()) {
-          userRol = "InfrastructureOwner";
-        } else {
-          userRol = "Demo";
-        } 
-        console.log("Success obtaining user.");
+        userRol = userAPI.utils.getRole(user);
+        console.log("Success obtaining user: " + user.displayName);
+        console.log("Role: " + userRol);
       },
       function(response) {
         console.log("Error obtaining user. " + response);	
     });
-  }
-  
-  function isInfrastructureOwner (region) {
-    if(region) {
-      var FIDASHRegion = region + " FIDASH";
-      for (var index = 0; index < user.organizations.length; index++) {
-        if (FIDASHRegion === user.organizations[index].name) {
-          return true;
-        }
-      }
-      return false;
-    } else {
-      return user.organizations.length > 0;
-    }
   }
   
   function saveNewEvent(event) {
@@ -138,8 +111,8 @@ var Calendar = (function (vis) {
       location: event.group,
       summary: event.title.replace(/\n/g, "\\n"),
       description: event.content,
-      dtend: moment(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
-      dtstart: moment(event.start).format("YYYY-MM-DD HH:mm:ssZZ")
+      dtend: moment.utc(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+      dtstart: moment.utc(event.start).format("YYYY-MM-DD HH:mm:ssZZ")
     };
     
     calendarAPI.addEvent(eventAPI, 
@@ -161,8 +134,8 @@ var Calendar = (function (vis) {
       location: event.group,
       summary: event.title.replace(/\n/g, "\\n"),
       description: event.content,
-      dtend: moment(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
-      dtstart: moment(event.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+      dtend: moment.utc(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+      dtstart: moment.utc(event.start).format("YYYY-MM-DD HH:mm:ssZZ"),
       uid: event.id
     };
     
@@ -203,13 +176,13 @@ var Calendar = (function (vis) {
   
   function doubleClick (props) {
     switch (userRol) {
-      case ROLES.DEMO:
+      case userAPI.ROLES.DEMO:
         if (props.group === "Demos") {
           showEventEditor(props);
         }
         break;
-      case ROLES.INFRASTRUCTUREOWNER:
-        if (isInfrastructureOwner(props.group)) {
+      case userAPI.ROLES.INFRASTRUCTUREOWNER:
+        if (userAPI.utils.isInfrastructureOwner(user, props.group)) {
           showEventEditor(props);
         }
         break;
@@ -248,7 +221,7 @@ var Calendar = (function (vis) {
           }
       },
       moment: function(date) {
-        return vis.moment(date).utcOffset('+01:00');
+        return vis.moment(date).utcOffset('+00:00');
       }
     };
   }
@@ -273,13 +246,13 @@ var Calendar = (function (vis) {
       }
       
       options.onMove = function (item, callback) {
-        item.title = item.content + "\n" + "Start: " + moment(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment(item.end).format('YYYY-MM-DD HH:mm');
+        item.title = item.content + "\n" + "Start: " + moment.utc(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment.utc(item.end).format('YYYY-MM-DD HH:mm');
         var event = {
           location: item.group,
           summary: item.title.replace(/\n/g, "\\n"),
           description: item.content,
-          dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
-          dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtend: moment.utc(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtstart: moment.utc(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
           uid: item.id
         };
         calendarAPI.updateEvent(event,
@@ -299,8 +272,8 @@ var Calendar = (function (vis) {
           location: item.group,
           summary: item.title.replace(/\n/g, "\\n"),
           description: item.content,
-          dtend: moment(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
-          dtstart: moment(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtend: moment.utc(item.end).format("YYYY-MM-DD HH:mm:ssZZ"),
+          dtstart: moment.utc(item.start).format("YYYY-MM-DD HH:mm:ssZZ"),
           uid: item.id
         };
         calendarAPI.deleteEvent(event,
@@ -320,8 +293,8 @@ var Calendar = (function (vis) {
       timeline = new vis.Timeline(container, events, regions, options);
           
       obtainUser();
-      obtainEvents();
       obtainRegions();
+      obtainEvents();
       
       timeline.setOptions(options);
           
@@ -330,7 +303,7 @@ var Calendar = (function (vis) {
       eventEditor.setUp();
           
       timeline.on('doubleClick', doubleClick);
-      timeline.setWindow(moment().subtract(2, 'days'), moment().add(13, 'days'));
+      timeline.setWindow(moment.utc().subtract(2, 'days'), moment.utc().add(13, 'days'));
     }
   };
 
