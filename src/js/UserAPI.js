@@ -5,7 +5,7 @@ var UserAPI = (function () {
 
     var url = "https://account.lab.fiware.org/user";
     var USERROLES = {
-      UPTIMEREQUEST: "UpTimeRequest",
+      UPTIMEREQUEST: "UpTimeRequester",
       INFRASTRUCTUREOWNER: "InfrastructureOwner",
       ANONYMOUS: "Anonymous"
     };
@@ -34,19 +34,25 @@ var UserAPI = (function () {
     }
     
     function isInfrastructureOwner (user, region) {
-      var index;
+      var indexOrg, indexRol;
       if(region) {
         var FIDASHRegion = region + " FIDASH";
-        for (index = 0; index < user.organizations.length; index++) {
-          if (FIDASHRegion === user.organizations[index].name) {
-            return true;
+        for (indexOrg = 0; indexOrg < user.organizations.length; indexOrg++) {
+          if (FIDASHRegion === user.organizations[indexOrg].name) {
+            for (indexRol = 0; indexRol < user.organizations[indexOrg].roles.length; indexRol++) {
+              if(user.organizations[indexOrg].roles[indexRol].name === USERROLES.INFRASTRUCTUREOWNER) {
+                return true;
+              }
+            }
           }
         }
         return false;
       } else {
-        for (index = 0; index < user.roles.length; index++) {
-          if (user.roles[index].name === USERROLES.INFRASTRUCTUREOWNER) {
-            return true;
+        for (indexOrg = 0; indexOrg < user.organizations.length; indexOrg++) {
+          for (indexRol = 0; indexRol < user.organizations[indexOrg].roles.length; indexRol++) {
+            if(user.organizations[indexOrg].roles[indexRol].name === USERROLES.INFRASTRUCTUREOWNER) {
+              return true;
+            }
           }
         }
         return false;
@@ -65,10 +71,6 @@ var UserAPI = (function () {
     function isAnonymous (user) {
       return !isInfrastructureOwner(user) && !isUpTimeRequest(user);
     }
-    
-    function test(success, error) {
-
-    }
 
     /******************************************************************/
     /*                 P U B L I C   F U N C T I O N S                */
@@ -78,9 +80,6 @@ var UserAPI = (function () {
       getUser: function (accessToken, success, error) {
         getUser(accessToken, success, error);
       },
-		  test: function (success, error) {
-				test(success, error);
-			},
       ROLES: {
         UPTIMEREQUEST: USERROLES.UPTIMEREQUEST,
         INFRASTRUCTUREOWNER: USERROLES.INFRASTRUCTUREOWNER,
