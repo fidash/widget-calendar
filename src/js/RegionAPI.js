@@ -27,19 +27,12 @@ var RegionAPI = (function () {
         onError: error,
       });
     }
-    
-    function test(success, error) {
-
-    }
 
     /******************************************************************/
     /*                 P U B L I C   F U N C T I O N S                */
     /******************************************************************/
 
     RegionAPI.prototype = {
-		  test: function (success, error) {
-				test(success, error);
-			},
       getRegions: function (success, error) {
         getRegions(success, error);
       }
