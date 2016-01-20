@@ -68,7 +68,15 @@
 }
 .vis-label {
   background-color: rgba(0,0,0,0.10);
+  border-left-color: #FF7F6E;
+  border-left-width: medium;
+  border-left-style: solid;
+  padding-right: 3px;
 }
 .vis-label.editable {
   background-color: transparent;
+  border-left-color: #73B2E8;
+  border-left-width: medium;
+  border-left-style: solid;
+  padding-right: 3px;
 }
