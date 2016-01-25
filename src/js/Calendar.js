@@ -48,7 +48,7 @@ var Calendar = (function (vis) {
             type: 'range'
           };
           
-          if (event.location === "UptimeRequest") {
+          if (event.location === "UptimeRequests") {
             newEvent.className = "uptime-request";
             newEvent.editable = userAPI.utils.isUptimeRequest(user);
           } else {
@@ -74,9 +74,9 @@ var Calendar = (function (vis) {
         regions.clear();
         
         if (userRol === userAPI.ROLES.UPTIMEREQUEST) {
-          regions.add({id: "UptimeRequest", content: "Uptime Request", className: "editable"});
+          regions.add({id: "UptimeRequests", content: "Uptime Request", className: "editable"});
         } else {
-          regions.add({id: "UptimeRequest", content: "Uptime Request"});
+          regions.add({id: "UptimeRequests", content: "Uptime Request"});
         }
         
         object._embedded.regions.forEach(function(region) {
@@ -162,7 +162,7 @@ var Calendar = (function (vis) {
         end: new Date(props.time.getTime() + 21600000), 
         group: props.group, 
         type: 'range', 
-        className: (props.group === "UptimeRequest") ? 'uptime-request' : 'maintenance', 
+        className: (props.group === "UptimeRequests") ? 'uptime-request' : 'maintenance', 
         editable: true
       };
       eventEditor.showEventEditor(event, saveNewEvent);
@@ -177,7 +177,7 @@ var Calendar = (function (vis) {
   function doubleClick (props) {
     switch (userRol) {
       case userAPI.ROLES.UPTIMEREQUEST:
-        if (props.group === "UptimeRequest") {
+        if (props.group === "UptimeRequests") {
           showEventEditor(props);
         }
         break;
@@ -188,6 +188,45 @@ var Calendar = (function (vis) {
         break;
       default: 
         break; 
+    }
+  }
+  
+  function onRangechanged(properties) {
+    var start = properties.start;
+    var end = properties.start;
+    
+    console.log("Range Changed");
+    if (properties.byUser) {
+      calendarAPI.getEvents(moment.utc(start).add(2, 'months'), moment.utc(end).subtract(15, 'days'),
+      function (response) {
+        JSON.parse(response.response).events.forEach(function(event) {
+          var newEvent = {
+            id: event.uid,
+            content: event.description,
+            title: event.summary.replace(/\\\n/g, "\n"),
+            group: event.location,
+            start: moment.utc(event.dtstart),
+            end: moment.utc(event.dtend),
+            className: "",
+            editable: false,
+            type: 'range'
+          };
+          
+          if (event.location === "UptimeRequests") {
+            newEvent.className = "uptime-request";
+            newEvent.editable = userAPI.utils.isUptimeRequest(user);
+          } else {
+            newEvent.className = "maintenance";
+            newEvent.editable = userAPI.utils.isInfrastructureOwner(user, event.location);
+          }
+          console.log(newEvent);
+          events.add(newEvent);
+        }, this);
+        console.log("Success obtaining events.");
+      },
+      function (response) {
+        console.log("Error obtaining events. " + response);
+      });
     }
   }
   
@@ -205,10 +244,10 @@ var Calendar = (function (vis) {
         remove: true
       },
       groupOrder: function (a, b) {
-          if (a.id === "UptimeRequest") {
+          if (a.id === "UptimeRequests") {
             return -1;
           }
-          if (b.id === "UptimeRequest") {
+          if (b.id === "UptimeRequests") {
             return 1;
           }
           
@@ -286,6 +325,7 @@ var Calendar = (function (vis) {
             callback(null);
         });
       };
+      
           
       regions.on("*", updateRegions);
       events.on("*", updateEvents);
@@ -303,6 +343,7 @@ var Calendar = (function (vis) {
       eventEditor.setUp();
           
       timeline.on('doubleClick', doubleClick);
+      timeline.on('rangechanged', onRangechanged);
       timeline.setWindow(moment.utc().subtract(2, 'days'), moment.utc().add(13, 'days'));
     }
   };

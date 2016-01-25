@@ -1,4 +1,4 @@
-/* global console, MashupPlatform */
+/* global console, moment, MashupPlatform */
 
 var CalendarAPI = (function () {
     "use strict";
@@ -22,6 +22,20 @@ var CalendarAPI = (function () {
         requestHeaders: {
           "X-FI-WARE-OAuth-Token": "true",
           "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
+        },
+        onSuccess: success,
+        onError: error
+      });
+    }
+    
+    function getEvents(start, end, success, error) {
+      MashupPlatform.http.makeRequest(url + "/events", {
+        method: 'GET',
+        requestHeaders: {
+          "X-FI-WARE-OAuth-Token": "true",
+          "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token",
+          "start": moment.utc(start).format("YYYY-MM-DD"),
+          "end": moment.utc(end).format("YYYY-MM-DD")
         },
         onSuccess: success,
         onError: error
@@ -55,7 +69,7 @@ var CalendarAPI = (function () {
     }
     
     function updateEvent(event, success, error) {
-      //TODO: Implementar con la API cuando este disponible.
+      //TODO: Implementar correctamente con la API cuando este disponible.
       deleteEvent(event, function() {
         console.log("Event removed (Update) successfully.");
         event.uid = null;
@@ -76,15 +90,15 @@ var CalendarAPI = (function () {
     }
     
     function createEventObject(uid, description, summary, location, dtstart, dtend, dtstamp) {
-      var event = {};
-      if (uid !== null) event.uid = uid;
-      if (description !== null) event.description = description;
-      if (summary !== null) event.summary = summary;
-      if (location !== null) event.location = location;
-      if (dtstart !== null) event.dtstart = dtstart;
-      if (dtend !== null) event.dtend = dtend;
-      if (dtstamp !== null) event.dtstamp = dtstamp;
-      return event;
+      return {
+        uid: uid,
+        description: description,
+        summary: summary,
+        location: location,
+        dtstart: dtstart,
+        dtend: dtend,
+        dtstamp: dtstamp
+      };
     }
 
     /******************************************************************/
@@ -94,6 +108,9 @@ var CalendarAPI = (function () {
     CalendarAPI.prototype = {
       getAllEvents: function (success, error) {
         getAllEvents(success, error);
+      },
+      getEvents: function (start, end, success, error) {
+        getEvents(start, end, success, error);
       },
       addEvent: function (event, success, error) {
         addEvent(event, success, error);
