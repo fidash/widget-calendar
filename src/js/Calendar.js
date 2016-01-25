@@ -1,4 +1,4 @@
-/* global vis, MashupPlatform, console, moment, EventEditor, CalendarAPI, RegionAPI, UserAPI */
+/* global vis, console, moment, EventEditor, CalendarAPI, RegionAPI, UserAPI */
 
 var Calendar = (function (vis) {
   "use strict";
@@ -48,9 +48,9 @@ var Calendar = (function (vis) {
             type: 'range'
           };
           
-          if (event.location === "Up Time Request") {
-            newEvent.className = "up-time-request";
-            newEvent.editable = userAPI.utils.isUpTimeRequest(user);
+          if (event.location === "Uptime Request") {
+            newEvent.className = "uptime-request";
+            newEvent.editable = userAPI.utils.isUptimeRequest(user);
           } else {
             newEvent.className = "maintenance";
             newEvent.editable = userAPI.utils.isInfrastructureOwner(user, event.location);
@@ -74,9 +74,9 @@ var Calendar = (function (vis) {
         regions.clear();
         
         if (userRol === userAPI.ROLES.UPTIMEREQUEST) {
-          regions.add({id: "Up Time Request", content: "Up Time Request", className: "editable"});
+          regions.add({id: "Uptime Request", content: "Uptime Request", className: "editable"});
         } else {
-          regions.add({id: "Up Time Request", content: "Up Time Request"});
+          regions.add({id: "Uptime Request", content: "Uptime Request"});
         }
         
         object._embedded.regions.forEach(function(region) {
@@ -99,6 +99,7 @@ var Calendar = (function (vis) {
         user = JSON.parse(response.response);
         userRol = userAPI.utils.getRole(user);
         console.log("Success obtaining user: " + user.displayName);
+        console.log(JSON.stringify(user));
         console.log("Role: " + userRol);
       },
       function(response) {
@@ -126,7 +127,6 @@ var Calendar = (function (vis) {
     function (response) {
         console.log("Error creating Event. " + response);
     });
-    
   }
   
   function saveEvent(event) {
@@ -162,7 +162,7 @@ var Calendar = (function (vis) {
         end: new Date(props.time.getTime() + 21600000), 
         group: props.group, 
         type: 'range', 
-        className: (props.group === "Up Time Request") ? 'up-time-request' : 'maintenance', 
+        className: (props.group === "Uptime Request") ? 'uptime-request' : 'maintenance', 
         editable: true
       };
       eventEditor.showEventEditor(event, saveNewEvent);
@@ -177,7 +177,7 @@ var Calendar = (function (vis) {
   function doubleClick (props) {
     switch (userRol) {
       case userAPI.ROLES.UPTIMEREQUEST:
-        if (props.group === "Up Time Request") {
+        if (props.group === "Uptime Request") {
           showEventEditor(props);
         }
         break;
@@ -205,10 +205,10 @@ var Calendar = (function (vis) {
         remove: true
       },
       groupOrder: function (a, b) {
-          if (a.id === "Up Time Request") {
+          if (a.id === "Uptime Request") {
             return -1;
           }
-          if (b.id === "Up Time Request") {
+          if (b.id === "Uptime Request") {
             return 1;
           }
           

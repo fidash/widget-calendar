@@ -5,7 +5,7 @@ var UserAPI = (function () {
 
     var url = "https://account.lab.fiware.org/user";
     var USERROLES = {
-      UPTIMEREQUEST: "UpTimeRequester",
+      UPTIMEREQUEST: "UptimeRequester",
       INFRASTRUCTUREOWNER: "InfrastructureOwner",
       ANONYMOUS: "Anonymous"
     };
@@ -59,7 +59,7 @@ var UserAPI = (function () {
       }
     }
     
-    function isUpTimeRequest (user) {
+    function isUptimeRequest (user) {
       for (var index = 0; index < user.roles.length; index++) {
         if (user.roles[index].name === USERROLES.UPTIMEREQUEST) {
           return true;
@@ -69,7 +69,7 @@ var UserAPI = (function () {
     }
     
     function isAnonymous (user) {
-      return !isInfrastructureOwner(user) && !isUpTimeRequest(user);
+      return !isInfrastructureOwner(user) && !isUptimeRequest(user);
     }
 
     /******************************************************************/
@@ -89,15 +89,15 @@ var UserAPI = (function () {
         isInfrastructureOwner: function (user, region) {
           return isInfrastructureOwner(user, region);
         },
-        isUpTimeRequest: function (user) {
-          return isUpTimeRequest(user);
+        isUptimeRequest: function (user) {
+          return isUptimeRequest(user);
         },
         isAnonymous: function (user) {
           return isAnonymous(user);
         },
         getRole: function (user) {
           if (isInfrastructureOwner(user)) return USERROLES.INFRASTRUCTUREOWNER;
-          if (isUpTimeRequest(user)) return USERROLES.UPTIMEREQUEST;
+          if (isUptimeRequest(user)) return USERROLES.UPTIMEREQUEST;
           if (isAnonymous(user)) return USERROLES.ANONYMOUS;
         }
       }
