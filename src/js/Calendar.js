@@ -48,7 +48,7 @@ var Calendar = (function (vis) {
             type: 'range'
           };
           
-          if (event.location === "Uptime Request") {
+          if (event.location === "UptimeRequest") {
             newEvent.className = "uptime-request";
             newEvent.editable = userAPI.utils.isUptimeRequest(user);
           } else {
@@ -74,9 +74,9 @@ var Calendar = (function (vis) {
         regions.clear();
         
         if (userRol === userAPI.ROLES.UPTIMEREQUEST) {
-          regions.add({id: "Uptime Request", content: "Uptime Request", className: "editable"});
+          regions.add({id: "UptimeRequest", content: "Uptime Request", className: "editable"});
         } else {
-          regions.add({id: "Uptime Request", content: "Uptime Request"});
+          regions.add({id: "UptimeRequest", content: "Uptime Request"});
         }
         
         object._embedded.regions.forEach(function(region) {
@@ -162,7 +162,7 @@ var Calendar = (function (vis) {
         end: new Date(props.time.getTime() + 21600000), 
         group: props.group, 
         type: 'range', 
-        className: (props.group === "Uptime Request") ? 'uptime-request' : 'maintenance', 
+        className: (props.group === "UptimeRequest") ? 'uptime-request' : 'maintenance', 
         editable: true
       };
       eventEditor.showEventEditor(event, saveNewEvent);
@@ -177,7 +177,7 @@ var Calendar = (function (vis) {
   function doubleClick (props) {
     switch (userRol) {
       case userAPI.ROLES.UPTIMEREQUEST:
-        if (props.group === "Uptime Request") {
+        if (props.group === "UptimeRequest") {
           showEventEditor(props);
         }
         break;
@@ -205,10 +205,10 @@ var Calendar = (function (vis) {
         remove: true
       },
       groupOrder: function (a, b) {
-          if (a.id === "Uptime Request") {
+          if (a.id === "UptimeRequest") {
             return -1;
           }
-          if (b.id === "Uptime Request") {
+          if (b.id === "UptimeRequest") {
             return 1;
           }
           
@@ -232,7 +232,7 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.8.75");
+      console.log("Start Timeline v0.8.79");
       
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
