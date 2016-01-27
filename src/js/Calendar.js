@@ -73,7 +73,7 @@ var Calendar = (function (vis) {
         
         regions.clear();
         
-        if (userRol === userAPI.ROLES.UPTIMEREQUEST) {
+        if (userAPI.utils.isUptimeRequest(user)) {
           regions.add({id: "UptimeRequests", content: "Uptime Request", className: "editable"});
         } else {
           regions.add({id: "UptimeRequests", content: "Uptime Request"});
