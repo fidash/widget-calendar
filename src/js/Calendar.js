@@ -174,7 +174,7 @@ var Calendar = (function (vis) {
   function doubleClick (props) {
     switch (props.group) {
       case "UptimeRequests":
-        if (userAPI.isUptimeRequest(user)) {
+        if (userAPI.utils.isUptimeRequest(user)) {
           showEventEditor(props);
         }
         break;
@@ -266,7 +266,7 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.8.85");
+      console.log("Start Timeline v0.8.86");
       
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
