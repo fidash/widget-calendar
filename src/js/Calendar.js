@@ -266,7 +266,7 @@ var Calendar = (function (vis) {
 
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
-      console.log("Start Timeline v0.8.83");
+      console.log("Start Timeline v0.8.85");
       
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
