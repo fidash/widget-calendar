@@ -13,7 +13,6 @@ var Calendar = (function (vis) {
   var userAPI;
   var regionAPI;
   var user;
-  var userRol;
 
   /*****************************************************************
   *                     C O N S T R U C T O R                      *
@@ -97,10 +96,8 @@ var Calendar = (function (vis) {
     userAPI.getUser(
       function(response) {
         user = JSON.parse(response.response);
-        userRol = userAPI.utils.getRole(user);
         console.log("Success obtaining user: " + user.displayName);
         console.log(JSON.stringify(user));
-        console.log("Role: " + userRol);
       },
       function(response) {
         console.log("Error obtaining user. " + response);	
@@ -175,18 +172,16 @@ var Calendar = (function (vis) {
   }
   
   function doubleClick (props) {
-    switch (userRol) {
-      case userAPI.ROLES.UPTIMEREQUEST:
-        if (props.group === "UptimeRequests") {
+    switch (props.group) {
+      case "UptimeRequests":
+        if (userAPI.isUptimeRequest(user)) {
           showEventEditor(props);
         }
         break;
-      case userAPI.ROLES.INFRASTRUCTUREOWNER:
+      default:
         if (userAPI.utils.isInfrastructureOwner(user, props.group)) {
           showEventEditor(props);
-        }
-        break;
-      default: 
+        } 
         break; 
     }
   }
