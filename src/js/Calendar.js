@@ -23,11 +23,11 @@ var Calendar = (function (vis) {
   /******************************************************************/
   /*                P R I V A T E   F U N C T I O N S               */
   /******************************************************************/
-  
+
   function updateEvents () { timeline.setItems(events); }
-  
+
   function updateRegions () { timeline.setGroups(regions); }
-  
+
   function updateOptions () { timeline.setOptions(options); }
 
   function obtainEvents () {
@@ -46,7 +46,7 @@ var Calendar = (function (vis) {
             editable: false,
             type: 'range'
           };
-          
+
           if (event.location === "UptimeRequests") {
             newEvent.className = "uptime-request";
             newEvent.editable = userAPI.utils.isUptimeRequest(user);
@@ -57,27 +57,58 @@ var Calendar = (function (vis) {
           console.log(newEvent);
           events.add(newEvent);
         }, this);
-        console.log("Success obtaining events.");        
+        console.log("Success obtaining events.");
       },
       function (response) {
         console.log("Error obtaining events. " + response);
       }
     );
   }
-  
+
+  function setDefaultRegions () {
+    if (typeof user === "undefined") {
+      // I have to do this because the asynchronous code is messed up.
+      // Please use promises
+      // http://callbackhell.com/
+      // https://www.promisejs.org/
+      setTimeout(hardCodeRegions, 300);
+      return;
+    }
+
+    regions.clear();
+    var regionsNames = ["Berlin2", "Budapest2", "Crete", "Gent", "Karlskrona2", "Lannion2", "PiraeusN", "PiraeusU", "Poznan", "Prague", "SaoPaulo", "SophiaAntipolis", "Spain2", "Trento", "Volos", "Zurich", "Mexico", "Waterford"];
+
+    if (userAPI.utils.isUptimeRequest(user)) {
+      regions.add({id: "UptimeRequests", content: "Uptime Request", className: "editable"});
+    } else {
+      regions.add({id: "UptimeRequests", content: "Uptime Request"});
+    }
+
+    regionsNames.forEach(function(region) {
+      if(userAPI.utils.isInfrastructureOwner(user, region)) {
+        regions.add({id: region, content: region, className: "editable"});
+      } else {
+        regions.add({id: region, content: region});
+      }
+    }, this);
+    console.log("Success hardcoding regions.");
+  }
+
   function obtainRegions () {
+    setDefaultRegions();
+
     regionAPI.getRegions(
       function(response) {
         var object = JSON.parse(response.response);
-        
+
         regions.clear();
-        
+
         if (userAPI.utils.isUptimeRequest(user)) {
           regions.add({id: "UptimeRequests", content: "Uptime Request", className: "editable"});
         } else {
           regions.add({id: "UptimeRequests", content: "Uptime Request"});
         }
-        
+
         object._embedded.regions.forEach(function(region) {
           if(userAPI.utils.isInfrastructureOwner(user, region.id)) {
             regions.add({id: region.id, content: region.id, className: "editable"});
@@ -85,13 +116,13 @@ var Calendar = (function (vis) {
             regions.add({id: region.id, content: region.id});
           }
         }, this);
-        console.log("Success obtaining regions.");              
+        console.log("Success obtaining regions.");
       },
       function(response) {
-        console.log("Error obtaining regions. " + response);	
+        console.log("Error obtaining regions. " + response);
     });
   }
-  
+
   function obtainUser () {
     userAPI.getUser(
       function(response) {
@@ -100,10 +131,10 @@ var Calendar = (function (vis) {
         console.log(JSON.stringify(user));
       },
       function(response) {
-        console.log("Error obtaining user. " + response);	
+        console.log("Error obtaining user. " + response);
     });
   }
-  
+
   function saveNewEvent(event) {
     var eventAPI = {
       location: event.group,
@@ -112,11 +143,11 @@ var Calendar = (function (vis) {
       dtend: moment.utc(event.end).format("YYYY-MM-DD HH:mm:ssZZ"),
       dtstart: moment.utc(event.start).format("YYYY-MM-DD HH:mm:ssZZ")
     };
-    
-    calendarAPI.addEvent(eventAPI, 
+
+    calendarAPI.addEvent(eventAPI,
     function (response) {
         console.log("Created Event Successfully.");
-        events.remove(event.id);        
+        events.remove(event.id);
         event.id = JSON.parse(response.response).event.uid;
         events.add(event);
         eventEditor.hideEventEditor();
@@ -125,7 +156,7 @@ var Calendar = (function (vis) {
         console.log("Error creating Event. " + response);
     });
   }
-  
+
   function saveEvent(event) {
     var eventAPI = {
       location: event.group,
@@ -135,7 +166,7 @@ var Calendar = (function (vis) {
       dtstart: moment.utc(event.start).format("YYYY-MM-DD HH:mm:ssZZ"),
       uid: event.id
     };
-    
+
     calendarAPI.updateEvent(eventAPI,
       function (response) {
         console.log("Event updated successfully.");
@@ -146,20 +177,20 @@ var Calendar = (function (vis) {
       },
       function (response) {
         console.log("Error updating Event. " + response);
-    });   
-  }  
-  
+    });
+  }
+
   function showEventEditor(props) {
     var event;
     if (props.what === "background") {
       event = {
         title: '',
-        content: '', 
-        start: new Date(props.time.getTime()), 
-        end: new Date(props.time.getTime() + 21600000), 
-        group: props.group, 
-        type: 'range', 
-        className: (props.group === "UptimeRequests") ? 'uptime-request' : 'maintenance', 
+        content: '',
+        start: new Date(props.time.getTime()),
+        end: new Date(props.time.getTime() + 21600000),
+        group: props.group,
+        type: 'range',
+        className: (props.group === "UptimeRequests") ? 'uptime-request' : 'maintenance',
         editable: true
       };
       eventEditor.showEventEditor(event, saveNewEvent);
@@ -170,7 +201,7 @@ var Calendar = (function (vis) {
         eventEditor.showEventEditor(event, saveEvent);
     }
   }
-  
+
   function doubleClick (props) {
     switch (props.group) {
       case "UptimeRequests":
@@ -181,15 +212,15 @@ var Calendar = (function (vis) {
       default:
         if (userAPI.utils.isInfrastructureOwner(user, props.group)) {
           showEventEditor(props);
-        } 
-        break; 
+        }
+        break;
     }
   }
-  
+
   function onRangechanged(properties) {
     var start = properties.start;
     var end = properties.start;
-    
+
     console.log("Range Changed");
     if (properties.byUser) {
       calendarAPI.getEvents(moment.utc(start).add(2, 'months'), moment.utc(end).subtract(15, 'days'),
@@ -206,7 +237,7 @@ var Calendar = (function (vis) {
             editable: false,
             type: 'range'
           };
-          
+
           if (event.location === "UptimeRequests") {
             newEvent.className = "uptime-request";
             newEvent.editable = userAPI.utils.isUptimeRequest(user);
@@ -224,10 +255,10 @@ var Calendar = (function (vis) {
       });
     }
   }
-  
+
   function getDefaultOptions() {
     return {
-      height: "100vh", 
+      height: "100vh",
       orientation: "top",
       zoomKey: 'shiftKey',
       zoomMax: 315360000000,
@@ -245,7 +276,7 @@ var Calendar = (function (vis) {
           if (b.id === "UptimeRequests") {
             return 1;
           }
-          
+
           var groups = [a.id, b.id];
           groups.sort();
           if (a.id === groups[0]) {
@@ -267,18 +298,18 @@ var Calendar = (function (vis) {
   Calendar.prototype = {
     init: function (calendarContainer, calendarOptions) {
       console.log("Start Timeline v0.8.86");
-      
+
       calendarAPI = new CalendarAPI();
       regionAPI = new RegionAPI();
       userAPI = new UserAPI();
-      
+
       container = calendarContainer;
       if (typeof calendarOptions !== 'undefined') {
         options = getDefaultOptions();
       } else {
-        options = calendarOptions;                
+        options = calendarOptions;
       }
-      
+
       options.onMove = function (item, callback) {
         item.title = item.content + "\n" + "Start: " + moment.utc(item.start).format('YYYY-MM-DD HH:mm') + "\n" + "End: " + moment.utc(item.end).format('YYYY-MM-DD HH:mm');
         var event = {
@@ -320,23 +351,23 @@ var Calendar = (function (vis) {
             callback(null);
         });
       };
-      
-          
+
+
       regions.on("*", updateRegions);
       events.on("*", updateEvents);
-          
+
       timeline = new vis.Timeline(container, events, regions, options);
-          
+
       obtainUser();
       obtainRegions();
       obtainEvents();
-      
+
       timeline.setOptions(options);
-          
+
       //Events Editor
       eventEditor = new EventEditor();
       eventEditor.setUp();
-          
+
       timeline.on('doubleClick', doubleClick);
       timeline.on('rangechanged', onRangechanged);
       timeline.setWindow(moment.utc().subtract(2, 'days'), moment.utc().add(13, 'days'));

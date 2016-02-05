@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="calendar-widget" version="0.8.86">
-  
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="calendar-widget" version="0.8.87">
+
   <details>
     <title>Calendar</title>
     <email>jortiz@conwet.com</email>

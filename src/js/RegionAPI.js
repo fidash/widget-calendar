@@ -10,7 +10,7 @@ var RegionAPI = (function () {
     *****************************************************************/
 
     function RegionAPI () {
-      
+
     }
 
     /******************************************************************/
@@ -21,10 +21,10 @@ var RegionAPI = (function () {
         method: 'GET',
         requestHeaders: {
           "X-FI-WARE-OAuth-Token": "true",
-          "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"	
+          "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"
         },
         onSuccess: success,
-        onError: error,
+        onError: error
       });
     }
 
@@ -33,9 +33,7 @@ var RegionAPI = (function () {
     /******************************************************************/
 
     RegionAPI.prototype = {
-      getRegions: function (success, error) {
-        getRegions(success, error);
-      }
+      getRegions: getRegions
     };
 
     return RegionAPI;

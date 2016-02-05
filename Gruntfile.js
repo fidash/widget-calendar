@@ -1,4 +1,4 @@
-/* 
+/*
  * @copyright 2015 CoNWeT Lab., Universidad Politécnica de Madrid
  * @license Apache v2 (http://www.apache.org/licenses/)
  */
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
           {expand: true, src: ['vis.min.css'], dest: 'build/wgt/lib/css', cwd: 'node_modules/vis/dist'},
           {expand: true, src: ['bootstrap.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/bootstrap/dist/js'},
           {expand: true, src: ['bootstrap.min.css'], dest: 'build/wgt/lib/css', cwd: 'node_modules/bootstrap/dist/css'},
-          {expand: true, src: ['moment.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/moment/min'},          
+          {expand: true, src: ['moment.min.js'], dest: 'build/wgt/lib/js', cwd: 'node_modules/moment/min'},
           {expand: true, src: ['delete.png'], dest: 'build/wgt/lib/css/img/timeline', cwd: 'node_modules/vis/dist/img/timeline'}
         ]
       }
