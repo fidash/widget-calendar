@@ -71,7 +71,7 @@ var Calendar = (function (vis) {
       // Please use promises
       // http://callbackhell.com/
       // https://www.promisejs.org/
-      setTimeout(hardCodeRegions, 300);
+      setTimeout(setDefaultRegions, 300);
       return;
     }
 
