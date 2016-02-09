@@ -65,38 +65,7 @@ var Calendar = (function (vis) {
     );
   }
 
-  function setDefaultRegions () {
-    if (typeof user === "undefined") {
-      // I have to do this because the asynchronous code is messed up.
-      // Please use promises
-      // http://callbackhell.com/
-      // https://www.promisejs.org/
-      setTimeout(setDefaultRegions, 300);
-      return;
-    }
-
-    regions.clear();
-    var regionsNames = ["Berlin2", "Budapest2", "Crete", "Gent", "Karlskrona2", "Lannion2", "PiraeusN", "PiraeusU", "Poznan", "Prague", "SaoPaulo", "SophiaAntipolis", "Spain2", "Trento", "Volos", "Zurich", "Mexico", "Waterford"];
-
-    if (userAPI.utils.isUptimeRequest(user)) {
-      regions.add({id: "UptimeRequests", content: "Uptime Request", className: "editable"});
-    } else {
-      regions.add({id: "UptimeRequests", content: "Uptime Request"});
-    }
-
-    regionsNames.forEach(function(region) {
-      if(userAPI.utils.isInfrastructureOwner(user, region)) {
-        regions.add({id: region, content: region, className: "editable"});
-      } else {
-        regions.add({id: region, content: region});
-      }
-    }, this);
-    console.log("Success hardcoding regions.");
-  }
-
   function obtainRegions () {
-    setDefaultRegions();
-
     regionAPI.getRegions(
       function(response) {
         var object = JSON.parse(response.response);
@@ -109,13 +78,14 @@ var Calendar = (function (vis) {
           regions.add({id: "UptimeRequests", content: "Uptime Request"});
         }
 
-        object._embedded.regions.forEach(function(region) {
+        object.nodes.forEach(function(region) {
           if(userAPI.utils.isInfrastructureOwner(user, region.id)) {
-            regions.add({id: region.id, content: region.id, className: "editable"});
+            regions.add({id: region.id, content: region.name, className: "editable"});
           } else {
-            regions.add({id: region.id, content: region.id});
+            regions.add({id: region.id, content: region.name});
           }
         }, this);
+
         console.log("Success obtaining regions.");
       },
       function(response) {
