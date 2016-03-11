@@ -2,22 +2,22 @@
 <html>
   <head>
     <title>Timeline | Basic demo</title>
-    
+
     <script src="lib/js/vis.min.js"></script>
     <script src="lib/js/jquery.min.js"></script>
     <script src="lib/js/bootstrap.min.js"></script>
     <script src="lib/js/moment.min.js"></script>
-    
+
     <script type="text/javascript" src="js/CalendarAPI.js"></script>
     <script type="text/javascript" src="js/RegionAPI.js"></script>
     <script type="text/javascript" src="js/UserAPI.js"></script>
     <script type="text/javascript" src="js/EventEditor.js"></script>
     <script type="text/javascript" src="js/Calendar.js"></script>
-    
+
     <link href="lib/css/vis.min.css" rel="stylesheet" type="text/css" />
     <link href="lib/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="css/Calendar.css" rel="stylesheet" type="text/css" />
-    
+
     <style type="text/css">
       body, html {
         font-family: sans-serif;
@@ -25,6 +25,12 @@
     </style>
   </head>
   <body>
+    <a class="ical" target="_blank" href="http://130.206.113.159:8085/api/v1/ics/maintenanceCalendarFiwareLab">
+      <img src="images/ical.gif"/>
+    </a>
+    <div class="helptab hide">
+      <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> If you need help, go to the cogs menu and click on "User's Manual" <span class="removeinfo glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+    </div>
     <div id="visualization"></div>
     <div class="modal fade" id="modalEventEditor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog modal-md" role="document">
@@ -33,16 +39,16 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="modalTitle"></h4>
           </div>
-          
+
           <div class="modal-body">
-            
+
             <div class="row">
               <div class='col-xs-12'>
                 <div class="form-group form-group-sm" id="descriptionForm">
                   <input type='text' class="form-control" id="description" placeholder="Event Description"/>
                 </div>
               </div>
-              
+
               <div class='col-xs-12'>
                 <table class="table dateTable">
                 <tbody>
@@ -66,13 +72,13 @@
                       </div>
                     </td>
                     <td class="dateTd">
-                      <div class="form-group form-group-sm" id="timeEndForm">                      
+                      <div class="form-group form-group-sm" id="timeEndForm">
                         <input type='date' class="form-control" id="dateEnd"/>
                       </div>
                     </td>
                   </tr>
                 </tbody>
-              </table>                
+              </table>
               </div>
             </div>
 

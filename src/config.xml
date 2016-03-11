@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="calendar-widget" version="0.9.0">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="UPM-ETSIINF" name="calendar-widget" version="0.9.1">
 
   <details>
     <title>Calendar</title>
@@ -7,9 +7,14 @@
     <image>images/catalogue.png</image>
     <smartphoneimage>images/catalogueSmartphone.png</smartphoneimage>
     <description></description>
-    <authors>jortizsancho</authors>
+    <doc>doc/index.md</doc>
+    <authors>jortizsancho; mgarcia</authors>
   </details>
   <wiring></wiring>
+
+  <persistentvariables>
+    <variable name="info" type="text" label="Show info" description=""/>
+  </persistentvariables>
 
   <contents src="index.html" useplatformstyle="true"/>
   <rendering height="38" width="7"/>
