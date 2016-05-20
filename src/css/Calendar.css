@@ -107,3 +107,23 @@
 .removeinfo {
   cursor: pointer;
 }
+
+#message {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  padding-left: 14%;
+  padding-right: 10%;
+  z-index: 1000;
+}
+
+.alert {
+  margin: 0 auto;
+  margin-top: 5px;
+}
+
+.alert .close {
+  top: 0px;
+  right: 0px;
+}

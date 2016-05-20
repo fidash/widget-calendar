@@ -15,7 +15,7 @@ var UserAPI = (function () {
     *****************************************************************/
 
     function UserAPI () {
-      
+
     }
 
     /******************************************************************/
@@ -29,10 +29,10 @@ var UserAPI = (function () {
           "x-fi-ware-oauth-get-parameter": "access_token"
         },
         onSuccess: success,
-        onError: error
+        onFailure: error
       });
     }
-    
+
     function isInfrastructureOwner (user, region) {
       var indexOrg, indexRol;
       if(region) {
@@ -58,7 +58,7 @@ var UserAPI = (function () {
         return false;
       }
     }
-    
+
     function isUptimeRequest (user) {
       for (var index = 0; index < user.roles.length; index++) {
         if (user.roles[index].name === USERROLES.UPTIMEREQUEST) {
@@ -67,7 +67,7 @@ var UserAPI = (function () {
       }
       return false;
     }
-    
+
     function isAnonymous (user) {
       return !isInfrastructureOwner(user) && !isUptimeRequest(user);
     }
@@ -77,29 +77,22 @@ var UserAPI = (function () {
     /******************************************************************/
 
     UserAPI.prototype = {
-      getUser: function (accessToken, success, error) {
-        getUser(accessToken, success, error);
-      },
+        getUser: getUser,
       ROLES: {
         UPTIMEREQUEST: USERROLES.UPTIMEREQUEST,
         INFRASTRUCTUREOWNER: USERROLES.INFRASTRUCTUREOWNER,
         ANONYMOUS: USERROLES.ANONYMOUS
       },
       utils: {
-        isInfrastructureOwner: function (user, region) {
-          return isInfrastructureOwner(user, region);
-        },
-        isUptimeRequest: function (user) {
-          return isUptimeRequest(user);
-        },
-        isAnonymous: function (user) {
-          return isAnonymous(user);
-        },
-        getRole: function (user) {
-          if (isInfrastructureOwner(user)) return USERROLES.INFRASTRUCTUREOWNER;
-          if (isUptimeRequest(user)) return USERROLES.UPTIMEREQUEST;
-          if (isAnonymous(user)) return USERROLES.ANONYMOUS;
-        }
+          isInfrastructureOwner: isInfrastructureOwner,
+          isUptimeRequest: isUptimeRequest,
+          isAnonymous: isAnonymous,
+          getRole: function (user) {
+              if (isInfrastructureOwner(user)) return USERROLES.INFRASTRUCTUREOWNER;
+              if (isUptimeRequest(user)) return USERROLES.UPTIMEREQUEST;
+              if (isAnonymous(user)) return USERROLES.ANONYMOUS;
+              return USERROLES.ANONYMOUS;
+          }
       }
     };
 

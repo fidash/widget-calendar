@@ -24,7 +24,7 @@ var RegionAPI = (function () {
           "X-FI-WARE-OAuth-Header-Name": "X-Auth-Token"
         },
         onSuccess: success,
-        onError: error
+        onFailure: error
       });
     }
 
